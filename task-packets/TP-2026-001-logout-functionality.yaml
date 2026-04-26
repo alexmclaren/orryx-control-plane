@@ -9,7 +9,7 @@ execution_pattern: "standard"
 
 target:
   product: "pillarworks"
-  repo: "pillarworks-build-mvp"
+  repo: "pillarworks"
   branch: "main"
 
 objective: |
