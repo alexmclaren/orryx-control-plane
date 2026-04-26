@@ -1,0 +1,232 @@
+task_id: "TP-2026-004"
+title: "Roll out standardized logout functionality across all products"
+created_by: "founder"
+created_date: "2026-04-26"
+priority: "medium"
+status: "blocked"
+
+execution_pattern: "parallel_tasks"
+
+execution_pattern_details:
+  parallel_tasks:
+    max_concurrent: 3
+    coordination: "independent"
+
+    tasks:
+      - task_id: "TP-2026-004-A"
+        product: "pillarworks"
+        description: "Implement logout in Pillarworks"
+        status: "ready"
+        depends_on: ["TP-2026-001"]
+
+      - task_id: "TP-2026-004-B"
+        product: "triora"
+        description: "Implement logout in Triora"
+        status: "ready"
+        depends_on: ["TP-2026-001"]
+
+      - task_id: "TP-2026-004-C"
+        product: "orryx"
+        description: "Implement logout in Orryx"
+        status: "ready"
+        depends_on: ["TP-2026-001"]
+
+    template_based: true
+    template_source: "TP-2026-001"
+
+target:
+  product: "multi-product"
+  repos:
+    - "pillarworks-build-mvp"
+    - "triora"
+    - "orryx"
+  branch: "main"
+
+objective: |
+  After TP-2026-001 successfully implements logout in Pillarworks, roll out
+  the same pattern to Triora and Orryx using parallel execution.
+
+  Use TP-2026-001 as template, adapting for each product's tech stack.
+
+  Success: All 3 products have working logout with consistent implementation.
+
+context_refs:
+  governance:
+    - "orryx-governance/security/security-policy.md (Section 3: Session Management)"
+  standards:
+    - "orryx-standards/CLAUDE.md (Section 4.1: Authentication)"
+  knowledge:
+    - "orryx-knowledge/patterns/authentication-pattern.md (Logout Flow)"
+    - "orryx-knowledge/patterns/audit-logging-pattern.md"
+  templates:
+    - "TP-2026-001 (Pillarworks logout implementation)"
+
+requirements:
+  functional:
+    - "POST /api/auth/logout endpoint in each product"
+    - "Audit logging for logout events"
+    - "Frontend logout button in navigation"
+    - "Session cleanup"
+    - "Redirect to /login"
+
+  non_functional:
+    - "Consistent implementation across products"
+    - "Same security controls"
+    - "Same audit log format"
+    - "Same user experience"
+
+acceptance_criteria:
+  - "Logout works in Pillarworks (from TP-2026-001)"
+  - "Logout works in Triora"
+  - "Logout works in Orryx"
+  - "All 3 implementations follow same pattern"
+  - "Audit logs use consistent format"
+  - "All tests pass in all products"
+  - "Test coverage >80% in all products"
+
+quality_requirements:
+  testing:
+    unit_tests: true
+    integration_tests: true
+    e2e_tests: false
+    min_coverage: 80
+
+  security:
+    security_scan: true
+    secrets_check: true
+
+  code_quality:
+    lint: true
+    type_check: true
+
+reviews:
+  qa_review: true
+  security_review: false
+  architecture_review: false
+
+estimated_effort: "4-6 hours (2 hours per product, 3 in parallel)"
+
+product_specific_notes:
+  pillarworks:
+    tech_stack: "react-typescript-vite, node-typescript-express"
+    notes: "Already implemented in TP-2026-001"
+    backend_file: "src/api/auth/logout.ts"
+    frontend_file: "src/components/Navigation.tsx"
+
+  triora:
+    tech_stack: "react-typescript-vite, node-typescript-express"
+    notes: "Same stack as Pillarworks, should be straightforward"
+    backend_file: "src/api/auth/logout.ts"
+    frontend_file: "src/components/Navigation.tsx"
+    differences: "May have different navigation component structure"
+
+  orryx:
+    tech_stack: "react-typescript-vite, node-typescript-express"
+    notes: "Same stack, may have additional user roles to consider"
+    backend_file: "src/api/auth/logout.ts"
+    frontend_file: "src/components/Navigation.tsx"
+    differences: "Multiple user types (GP, practice manager, admin)"
+
+implementation_template:
+  backend: |
+    // src/api/auth/logout.ts
+    export async function logout(userId: string) {
+      await AuditLog.create({
+        userId,
+        action: 'logout',
+        timestamp: new Date(),
+      });
+      return { success: true };
+    }
+
+  frontend: |
+    // src/components/Navigation.tsx
+    async function handleLogout() {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      window.location.href = '/login';
+    }
+
+  audit_log_format: |
+    {
+      userId: string,
+      action: 'logout',
+      timestamp: Date,
+      resourceType: 'user',
+      resourceId: userId,
+      details: {
+        product: 'pillarworks' | 'triora' | 'orryx'
+      }
+    }
+
+risks:
+  - risk: "Different navigation structures across products"
+    mitigation: "Adapt frontend implementation while keeping backend consistent"
+
+  - risk: "One product fails, blocks others"
+    mitigation: "Tasks are independent, continue with successful implementations"
+
+  - risk: "Inconsistent implementations"
+    mitigation: "Use same template, review for consistency"
+
+dependencies:
+  - task_id: "TP-2026-001"
+    description: "Pillarworks logout must be completed and validated first"
+    status: "pending"
+
+blockers:
+  - blocker: "TP-2026-001 not yet complete"
+    resolution: "Wait for TP-2026-001 to finish and be reviewed"
+
+parallel_execution_plan:
+  phase_1:
+    description: "Complete TP-2026-001 (Pillarworks logout)"
+    tasks: ["TP-2026-001"]
+
+  phase_2:
+    description: "Extract template and prepare for rollout"
+    actions:
+      - "Document Pillarworks implementation"
+      - "Create reusable template"
+      - "Identify product-specific adaptations needed"
+
+  phase_3:
+    description: "Parallel rollout to Triora and Orryx"
+    tasks: ["TP-2026-004-B", "TP-2026-004-C"]
+    execution: "parallel"
+    max_concurrent: 2
+
+  phase_4:
+    description: "Verification and documentation"
+    actions:
+      - "Test all 3 implementations"
+      - "Verify consistency"
+      - "Update orryx-knowledge with learnings"
+
+verification_plan:
+  consistency_check:
+    - "Backend endpoints identical structure"
+    - "Audit log format consistent"
+    - "Error handling consistent"
+    - "Session cleanup identical"
+
+  testing_matrix:
+    |              | Pillarworks | Triora | Orryx |
+    |--------------|-------------|--------|-------|
+    | Logout works | ✓           | ✓      | ✓     |
+    | Audit logged | ✓           | ✓      | ✓     |
+    | Redirect OK  | ✓           | ✓      | ✓     |
+    | Tests pass   | ✓           | ✓      | ✓     |
+
+result:
+  status: null
+  completed_date: null
+  products_completed: []
+  consistency_verified: null
+
+learnings:
+  patterns_discovered: []
+  issues_encountered: []
+  improvements_suggested: []

@@ -1,0 +1,125 @@
+task_id: "TP-2026-001"
+title: "Implement logout functionality for Pillarworks"
+created_by: "founder"
+created_date: "2026-04-26"
+priority: "high"
+status: "ready"
+
+execution_pattern: "standard"
+
+target:
+  product: "pillarworks"
+  repo: "pillarworks-build-mvp"
+  branch: "main"
+
+objective: |
+  Implement complete logout functionality for Pillarworks including:
+  - Backend logout endpoint
+  - Frontend logout button and handler
+  - Session cleanup
+  - Audit logging
+  - Redirect to login page
+
+context_refs:
+  governance:
+    - "orryx-governance/security/security-policy.md (Section 3: Session Management)"
+  standards:
+    - "orryx-standards/CLAUDE.md (Section 4.1: Authentication)"
+  knowledge:
+    - "orryx-knowledge/patterns/authentication-pattern.md (Logout Flow)"
+    - "orryx-knowledge/patterns/audit-logging-pattern.md (Authentication Events)"
+
+requirements:
+  functional:
+    - "POST /api/auth/logout endpoint"
+    - "Clear session/token on backend"
+    - "Audit log logout event"
+    - "Frontend logout button in navigation"
+    - "Clear client-side state"
+    - "Redirect to /login after logout"
+
+  non_functional:
+    - "Response time < 200ms"
+    - "Logout must work even if session expired"
+    - "Works across all browsers"
+    - "Accessible logout button (WCAG 2.1 AA)"
+
+acceptance_criteria:
+  - "User can click logout button in navigation"
+  - "Backend /api/auth/logout endpoint exists and works"
+  - "Session is cleared on backend"
+  - "Audit log entry created with action='logout'"
+  - "User redirected to /login page"
+  - "User cannot access protected pages after logout"
+  - "All tests pass (unit + integration)"
+  - "Test coverage >80%"
+
+quality_requirements:
+  testing:
+    unit_tests: true
+    integration_tests: true
+    e2e_tests: false
+    min_coverage: 80
+
+  security:
+    security_scan: true
+    secrets_check: true
+
+  code_quality:
+    lint: true
+    type_check: true
+
+reviews:
+  qa_review: true
+  security_review: true
+  architecture_review: false
+
+estimated_effort: "2-4 hours"
+
+implementation_hints:
+  backend:
+    file: "src/api/auth/logout.ts"
+    pattern: |
+      export async function logout(userId: string) {
+        await AuditLog.create({
+          userId,
+          action: 'logout',
+          timestamp: new Date(),
+        });
+        return { success: true };
+      }
+
+  frontend:
+    file: "src/components/Navigation.tsx"
+    pattern: |
+      async function handleLogout() {
+        await fetch('/api/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        window.location.href = '/login';
+      }
+
+risks:
+  - risk: "Session not properly cleared"
+    mitigation: "Test that protected routes redirect to login after logout"
+
+  - risk: "Audit log not created"
+    mitigation: "Add integration test to verify audit log entry"
+
+dependencies: []
+
+blockers: []
+
+result:
+  status: null
+  completed_date: null
+  execution_time: null
+  tests_passed: null
+  coverage_achieved: null
+  bugs_found: null
+
+learnings:
+  patterns_discovered: []
+  issues_encountered: []
+  improvements_suggested: []

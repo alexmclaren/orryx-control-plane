@@ -1,0 +1,397 @@
+task_id: "TP-2026-005"
+title: "Migrate Pillarworks patient data to new schema with audit fields"
+created_by: "founder"
+created_date: "2026-04-26"
+priority: "high"
+status: "ready"
+
+execution_pattern: "migration"
+
+execution_pattern_details:
+  migration:
+    type: "database_schema_migration"
+    risk_level: "high"
+
+    phases:
+      - phase: "analyze"
+        description: "Analyze current schema and data"
+        actions:
+          - "Review current patient table structure"
+          - "Count existing records"
+          - "Identify data quality issues"
+          - "Check for constraints and indexes"
+
+      - phase: "plan"
+        description: "Design migration approach"
+        actions:
+          - "Define new schema"
+          - "Design migration script"
+          - "Plan rollback procedure"
+          - "Estimate downtime"
+
+      - phase: "test"
+        description: "Test in non-production environments"
+        actions:
+          - "Clone production data to dev"
+          - "Run migration in dev"
+          - "Verify data integrity"
+          - "Test rollback"
+          - "Run migration in staging"
+
+      - phase: "execute"
+        description: "Execute in production"
+        actions:
+          - "Backup database"
+          - "Enable maintenance mode"
+          - "Run migration"
+          - "Verify success"
+          - "Disable maintenance mode"
+
+      - phase: "validate"
+        description: "Post-migration validation"
+        actions:
+          - "Verify data integrity"
+          - "Check application functionality"
+          - "Monitor for errors"
+          - "Document completion"
+
+    gates:
+      before_staging:
+        - "Dev migration successful"
+        - "Rollback tested"
+        - "Data validation passed"
+
+      before_production:
+        - "Staging migration successful"
+        - "Human approval obtained"
+        - "Backup verified"
+        - "Rollback plan documented"
+
+target:
+  product: "pillarworks"
+  repo: "pillarworks-build-mvp"
+  branch: "main"
+  database: "pillarworks-db"
+
+objective: |
+  Add audit tracking fields to patient table to comply with security policy:
+  - createdAt (timestamp)
+  - createdBy (user ID)
+  - updatedAt (timestamp)
+  - updatedBy (user ID)
+  - version (for optimistic locking)
+
+  Migrate existing ~500 patient records with default values.
+
+  Zero data loss, minimal downtime (<5 minutes).
+
+context_refs:
+  governance:
+    - "orryx-governance/security/security-policy.md (Section 5: Audit Logging)"
+    - "orryx-governance/policies/deployment-gates.yaml (Production deployment)"
+  standards:
+    - "orryx-standards/CLAUDE.md (Section 6: Deployment Rules)"
+  knowledge:
+    - "orryx-knowledge/patterns/audit-logging-pattern.md"
+    - "orryx-knowledge/anti-patterns/common-mistakes.md (Database section)"
+
+requirements:
+  schema_changes:
+    new_columns:
+      - name: "createdAt"
+        type: "TIMESTAMP"
+        nullable: false
+        default: "CURRENT_TIMESTAMP"
+
+      - name: "createdBy"
+        type: "VARCHAR(255)"
+        nullable: false
+        default: "'system-migration'"
+
+      - name: "updatedAt"
+        type: "TIMESTAMP"
+        nullable: false
+        default: "CURRENT_TIMESTAMP"
+
+      - name: "updatedBy"
+        type: "VARCHAR(255)"
+        nullable: false
+        default: "'system-migration'"
+
+      - name: "version"
+        type: "INTEGER"
+        nullable: false
+        default: "1"
+
+  constraints:
+    - "All existing data preserved"
+    - "No NULL values in new columns"
+    - "Foreign key integrity maintained"
+    - "Indexes remain functional"
+
+  non_functional:
+    - "Downtime <5 minutes for production"
+    - "Rollback time <2 minutes"
+    - "100% data integrity verified"
+    - "Application works immediately after migration"
+
+acceptance_criteria:
+  - "New columns added to patient table"
+  - "All existing patient records have audit fields"
+  - "createdAt/updatedAt default to record creation time (approximated)"
+  - "createdBy/updatedBy default to 'system-migration'"
+  - "version defaults to 1 for all existing records"
+  - "Zero data loss (record count unchanged)"
+  - "Application functionality unchanged"
+  - "Migration tested in dev and staging"
+  - "Rollback procedure tested and documented"
+  - "Production migration completed successfully"
+  - "Post-migration validation passed"
+
+quality_requirements:
+  testing:
+    dev_environment: true
+    staging_environment: true
+    rollback_tested: true
+    data_validation: true
+
+  safety:
+    backup_verified: true
+    rollback_plan: true
+    downtime_minimized: true
+    zero_data_loss: true
+
+reviews:
+  founder_review: true
+  architecture_review: true
+  security_review: false
+
+estimated_effort: "6-8 hours"
+
+current_schema:
+  table: "patients"
+  columns:
+    - "id (UUID, PRIMARY KEY)"
+    - "firstName (VARCHAR)"
+    - "lastName (VARCHAR)"
+    - "email (VARCHAR, UNIQUE)"
+    - "dateOfBirth (DATE)"
+    - "phone (VARCHAR)"
+    - "address (TEXT)"
+
+target_schema:
+  table: "patients"
+  columns:
+    - "id (UUID, PRIMARY KEY)"
+    - "firstName (VARCHAR)"
+    - "lastName (VARCHAR)"
+    - "email (VARCHAR, UNIQUE)"
+    - "dateOfBirth (DATE)"
+    - "phone (VARCHAR)"
+    - "address (TEXT)"
+    - "createdAt (TIMESTAMP, NOT NULL)"
+    - "createdBy (VARCHAR, NOT NULL)"
+    - "updatedAt (TIMESTAMP, NOT NULL)"
+    - "updatedBy (VARCHAR, NOT NULL)"
+    - "version (INTEGER, NOT NULL)"
+
+migration_script:
+  up: |
+    -- migration: add-audit-fields-to-patients
+    -- date: 2026-04-26
+
+    BEGIN;
+
+    -- Add audit columns
+    ALTER TABLE patients
+      ADD COLUMN createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      ADD COLUMN createdBy VARCHAR(255) NOT NULL DEFAULT 'system-migration',
+      ADD COLUMN updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      ADD COLUMN updatedBy VARCHAR(255) NOT NULL DEFAULT 'system-migration',
+      ADD COLUMN version INTEGER NOT NULL DEFAULT 1;
+
+    -- Update existing records with approximated timestamps
+    -- (Use earliest possible timestamp for existing records)
+    UPDATE patients
+    SET
+      createdAt = COALESCE(createdAt, '2025-01-01 00:00:00'),
+      updatedAt = COALESCE(updatedAt, CURRENT_TIMESTAMP);
+
+    -- Add trigger to auto-update updatedAt on changes
+    CREATE OR REPLACE FUNCTION update_updated_at_column()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      NEW.updatedAt = CURRENT_TIMESTAMP;
+      NEW.version = OLD.version + 1;
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    CREATE TRIGGER update_patients_updated_at
+      BEFORE UPDATE ON patients
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at_column();
+
+    COMMIT;
+
+  down: |
+    -- rollback: add-audit-fields-to-patients
+
+    BEGIN;
+
+    -- Drop trigger
+    DROP TRIGGER IF EXISTS update_patients_updated_at ON patients;
+    DROP FUNCTION IF EXISTS update_updated_at_column();
+
+    -- Remove audit columns
+    ALTER TABLE patients
+      DROP COLUMN IF EXISTS createdAt,
+      DROP COLUMN IF EXISTS createdBy,
+      DROP COLUMN IF EXISTS updatedAt,
+      DROP COLUMN IF EXISTS updatedBy,
+      DROP COLUMN IF EXISTS version;
+
+    COMMIT;
+
+validation_queries:
+  record_count: |
+    -- Verify record count unchanged
+    SELECT COUNT(*) FROM patients;
+    -- Expected: Same as before migration
+
+  audit_fields_populated: |
+    -- Verify all audit fields populated
+    SELECT COUNT(*) FROM patients
+    WHERE createdAt IS NULL
+       OR createdBy IS NULL
+       OR updatedAt IS NULL
+       OR updatedBy IS NULL
+       OR version IS NULL;
+    -- Expected: 0
+
+  data_integrity: |
+    -- Verify no data corruption
+    SELECT id, firstName, lastName, email
+    FROM patients
+    WHERE firstName IS NULL OR lastName IS NULL OR email IS NULL;
+    -- Expected: 0 (or same as before if NULLs were allowed)
+
+  trigger_works: |
+    -- Test trigger by updating a record
+    UPDATE patients SET firstName = firstName WHERE id = '<test-id>';
+    SELECT version, updatedAt FROM patients WHERE id = '<test-id>';
+    -- Expected: version = 2, updatedAt = recent timestamp
+
+execution_plan:
+  dev_environment:
+    - "Backup dev database"
+    - "Run migration script"
+    - "Run validation queries"
+    - "Test application functionality"
+    - "Test rollback script"
+    - "Restore from backup"
+    - "Re-run migration"
+
+  staging_environment:
+    - "Clone production data to staging"
+    - "Backup staging database"
+    - "Run migration script"
+    - "Run validation queries"
+    - "Test application end-to-end"
+    - "Measure migration time"
+    - "Test rollback"
+    - "Document any issues"
+
+  production_environment:
+    - "Schedule maintenance window (off-peak hours)"
+    - "Notify users of maintenance"
+    - "Backup production database (verify backup)"
+    - "Enable maintenance mode"
+    - "Run migration script"
+    - "Run validation queries"
+    - "Verify application functionality"
+    - "Disable maintenance mode"
+    - "Monitor for 1 hour"
+    - "Document completion"
+
+rollback_plan:
+  triggers:
+    - "Migration fails to complete"
+    - "Data validation fails"
+    - "Application errors after migration"
+    - "Unexpected data loss detected"
+
+  procedure:
+    - "Enable maintenance mode (if not already)"
+    - "Run rollback script (migration down)"
+    - "Verify rollback with validation queries"
+    - "If rollback fails, restore from backup"
+    - "Verify application functionality"
+    - "Investigate failure cause"
+    - "Disable maintenance mode"
+
+  time_estimate: "<2 minutes"
+
+risks:
+  - risk: "Migration fails mid-execution"
+    mitigation: "Use transaction (BEGIN/COMMIT), auto-rollback on error"
+
+  - risk: "Data loss during migration"
+    mitigation: "Full backup before migration, verified restore procedure"
+
+  - risk: "Application breaks after migration"
+    mitigation: "Test in dev and staging first, have rollback ready"
+
+  - risk: "Downtime exceeds 5 minutes"
+    mitigation: "Practice in staging, measure timing, optimize if needed"
+
+  - risk: "Trigger doesn't work correctly"
+    mitigation: "Test trigger in dev/staging, verify version increment works"
+
+dependencies:
+  - "Database access credentials"
+  - "Backup/restore procedures verified"
+  - "Maintenance mode feature exists"
+
+blockers: []
+
+communication_plan:
+  before_migration:
+    - "Notify founder of migration schedule"
+    - "Email users about maintenance window"
+    - "Post notice in application (if applicable)"
+
+  during_migration:
+    - "Status updates every 30 seconds"
+    - "Maintenance page visible to users"
+
+  after_migration:
+    - "Notify founder of completion"
+    - "Email users that service restored"
+    - "Document any issues encountered"
+
+monitoring_plan:
+  during_migration:
+    - "Watch for database errors"
+    - "Monitor migration script progress"
+    - "Track execution time"
+
+  post_migration:
+    - "Monitor application error logs (1 hour)"
+    - "Watch for database connection issues"
+    - "Check API response times"
+    - "Verify patient data accessible"
+
+result:
+  status: null
+  completed_date: null
+  environments_completed: []
+  production_downtime: null
+  records_migrated: null
+  validation_passed: null
+  issues_encountered: []
+
+learnings:
+  patterns_discovered: []
+  issues_encountered: []
+  improvements_suggested: []

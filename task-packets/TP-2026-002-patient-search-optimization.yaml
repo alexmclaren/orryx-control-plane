@@ -1,0 +1,245 @@
+task_id: "TP-2026-002"
+title: "Optimize patient search performance in Pillarworks"
+created_by: "founder"
+created_date: "2026-04-26"
+priority: "high"
+status: "ready"
+
+execution_pattern: "deep_research_with_ralph"
+
+execution_pattern_details:
+  deep_research:
+    scope: "very_thorough"
+    focus_areas:
+      - "Current patient search implementation"
+      - "Database indexes and query performance"
+      - "Frontend rendering bottlenecks"
+      - "Existing caching mechanisms"
+    expected_duration: "30-60 minutes"
+
+  ralph_loop:
+    min_iterations: 2
+    max_iterations: 5
+    phases:
+      - "Research: Investigate current implementation and performance metrics"
+      - "Analyze: Identify bottlenecks (database, API, frontend)"
+      - "Learn: Research optimization techniques (indexes, caching, pagination)"
+      - "Plan: Design solution approach"
+      - "Hypothesize: Predict performance improvements"
+      - "Implement: Execute optimization"
+      - "Verify: Measure actual performance gains"
+    exit_criteria:
+      - "Search response time <500ms for 10,000+ patients"
+      - "Frontend renders results in <100ms"
+      - "All tests pass"
+
+target:
+  product: "pillarworks"
+  repo: "pillarworks-build-mvp"
+  branch: "main"
+
+objective: |
+  Improve patient search performance from current ~2-3 seconds to <500ms.
+
+  Current issues:
+  - Search is slow with >1000 patients
+  - No database indexes
+  - Full table scans
+  - No pagination
+  - Frontend renders all results at once
+
+  Success: Search <500ms, scales to 10,000+ patients
+
+context_refs:
+  governance:
+    - "orryx-governance/security/security-policy.md (Section 4: Data Handling)"
+  standards:
+    - "orryx-standards/CLAUDE.md (Section 5.1: TypeScript strict mode)"
+  knowledge:
+    - "orryx-knowledge/domain/healthcare-au.md (Patient Identification)"
+    - "orryx-knowledge/anti-patterns/common-mistakes.md (N+1 Queries, Missing Indexes)"
+
+requirements:
+  functional:
+    - "Search patients by name, email, date of birth"
+    - "Results returned in <500ms"
+    - "Pagination (20 results per page)"
+    - "Fuzzy matching for names"
+    - "Highlight search terms in results"
+
+  non_functional:
+    - "Scalable to 10,000+ patients"
+    - "Response time <500ms (99th percentile)"
+    - "Frontend render time <100ms"
+    - "No N+1 query problems"
+    - "Proper database indexes"
+
+acceptance_criteria:
+  - "Search response time <500ms for 10,000 patients"
+  - "Database queries use indexes (verified in query plan)"
+  - "Pagination implemented (20 per page)"
+  - "No N+1 queries (verified in logs)"
+  - "Frontend uses virtualized list for rendering"
+  - "Performance benchmarks documented"
+  - "All tests pass"
+  - "Test coverage >80%"
+
+quality_requirements:
+  testing:
+    unit_tests: true
+    integration_tests: true
+    performance_tests: true
+    min_coverage: 80
+
+  security:
+    security_scan: true
+    secrets_check: true
+
+  code_quality:
+    lint: true
+    type_check: true
+
+reviews:
+  qa_review: true
+  security_review: true
+  architecture_review: true
+
+estimated_effort: "8-12 hours"
+
+investigation_required:
+  current_state:
+    - "Profile current search endpoint performance"
+    - "Analyze database query plans"
+    - "Check for existing indexes"
+    - "Measure frontend render time"
+    - "Count current patient records in dev/staging"
+
+  bottleneck_analysis:
+    - "Is it database query time?"
+    - "Is it API serialization?"
+    - "Is it network transfer?"
+    - "Is it frontend rendering?"
+
+  solution_options:
+    - "Add database indexes (firstName, lastName, email)"
+    - "Implement pagination"
+    - "Add Redis caching for frequent searches"
+    - "Use full-text search (PostgreSQL tsvector)"
+    - "Frontend virtualized list rendering"
+    - "Debounced search input"
+
+implementation_hints:
+  database_indexes:
+    file: "src/models/Patient.ts"
+    pattern: |
+      @Entity()
+      @Index(['firstName', 'lastName'])
+      @Index(['email'])
+      class Patient {
+        @Column()
+        @Index()
+        firstName: string;
+
+        @Column()
+        @Index()
+        lastName: string;
+
+        @Column()
+        @Index()
+        email: string;
+      }
+
+  pagination:
+    file: "src/api/patients/search.ts"
+    pattern: |
+      export async function searchPatients(
+        query: string,
+        page: number = 1,
+        limit: number = 20
+      ) {
+        const offset = (page - 1) * limit;
+
+        const [results, total] = await Patient.findAndCount({
+          where: {
+            [Op.or]: [
+              { firstName: { [Op.iLike]: `%${query}%` } },
+              { lastName: { [Op.iLike]: `%${query}%` } },
+              { email: { [Op.iLike]: `%${query}%` } },
+            ],
+          },
+          limit,
+          offset,
+          order: [['lastName', 'ASC'], ['firstName', 'ASC']],
+        });
+
+        return {
+          results,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+          },
+        };
+      }
+
+  frontend_virtualization:
+    file: "src/components/PatientSearch.tsx"
+    pattern: |
+      import { FixedSizeList } from 'react-window';
+
+      function PatientSearchResults({ results }) {
+        return (
+          <FixedSizeList
+            height={600}
+            itemCount={results.length}
+            itemSize={60}
+          >
+            {({ index, style }) => (
+              <div style={style}>
+                <PatientCard patient={results[index]} />
+              </div>
+            )}
+          </FixedSizeList>
+        );
+      }
+
+risks:
+  - risk: "Indexes slow down write operations"
+    mitigation: "Measure write performance, acceptable trade-off for read-heavy workload"
+
+  - risk: "Full-text search requires PostgreSQL-specific features"
+    mitigation: "Start with ILIKE queries, upgrade to tsvector if needed"
+
+  - risk: "Breaking changes to search API"
+    mitigation: "Version API (/v2/patients/search) or maintain backward compatibility"
+
+dependencies:
+  - "Database migration for adding indexes"
+
+blockers: []
+
+performance_targets:
+  current_baseline:
+    search_time: "2000-3000ms"
+    patient_count: "500"
+
+  target_metrics:
+    search_time: "<500ms"
+    patient_count: "10000+"
+    frontend_render: "<100ms"
+    db_query_time: "<200ms"
+
+result:
+  status: null
+  completed_date: null
+  execution_time: null
+  tests_passed: null
+  coverage_achieved: null
+  bugs_found: null
+  performance_improvement: null
+
+learnings:
+  patterns_discovered: []
+  issues_encountered: []
+  improvements_suggested: []

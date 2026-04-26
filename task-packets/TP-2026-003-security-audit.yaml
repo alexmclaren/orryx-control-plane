@@ -1,0 +1,269 @@
+task_id: "TP-2026-003"
+title: "Comprehensive security audit across all Orryx products"
+created_by: "founder"
+created_date: "2026-04-26"
+priority: "critical"
+status: "ready"
+
+execution_pattern: "swarming"
+
+execution_pattern_details:
+  swarming:
+    strategy: "parallel_agents"
+    coordination: "control_plane"
+    max_parallel: 4
+
+    agents:
+      - agent_id: "swarm-1-pillarworks-security"
+        role: "security-reviewer"
+        task: "Audit Pillarworks for security vulnerabilities"
+        scope:
+          - "Authentication & authorization"
+          - "Patient data handling"
+          - "API security"
+          - "Frontend security (XSS, CSRF)"
+        duration_estimate: "3-4 hours"
+
+      - agent_id: "swarm-2-triora-security"
+        role: "security-reviewer"
+        task: "Audit Triora for security vulnerabilities"
+        scope:
+          - "Consent management security"
+          - "Data encryption"
+          - "Session handling"
+          - "Input validation"
+        duration_estimate: "3-4 hours"
+
+      - agent_id: "swarm-3-infrastructure-security"
+        role: "security-reviewer"
+        task: "Audit infrastructure and deployment security"
+        scope:
+          - "AWS security groups"
+          - "Secrets management"
+          - "Database encryption"
+          - "Network security"
+        duration_estimate: "2-3 hours"
+
+      - agent_id: "swarm-4-compliance-check"
+        role: "security-reviewer"
+        task: "Verify compliance with security policies"
+        scope:
+          - "AU Privacy Act compliance"
+          - "Audit logging completeness"
+          - "Data residency (ap-southeast-2)"
+          - "Deployment gate enforcement"
+        duration_estimate: "2-3 hours"
+
+    merge_strategy: "aggregate_findings"
+    combined_deliverable: "security-audit-report.md"
+
+target:
+  product: "multi-product"
+  repos:
+    - "pillarworks-build-mvp"
+    - "triora"
+    - "orryx-infrastructure"
+  branch: "main"
+
+objective: |
+  Conduct comprehensive security audit across all Orryx products to identify:
+  - Security vulnerabilities (OWASP Top 10)
+  - Compliance gaps (AU Privacy Act, security policy)
+  - Missing security controls
+  - Insecure patterns
+
+  Deliverable: Security audit report with prioritized findings and remediation plan.
+
+context_refs:
+  governance:
+    - "orryx-governance/security/security-policy.md (All sections)"
+    - "orryx-governance/compliance/au-privacy-act.md"
+    - "orryx-governance/policies/deployment-gates.yaml"
+  standards:
+    - "orryx-standards/CLAUDE.md (Section 4: Security Standards)"
+  knowledge:
+    - "orryx-knowledge/patterns/authentication-pattern.md"
+    - "orryx-knowledge/patterns/audit-logging-pattern.md"
+    - "orryx-knowledge/anti-patterns/common-mistakes.md (Security section)"
+
+requirements:
+  audit_areas:
+    authentication:
+      - "Password hashing (bcrypt 10+ rounds)"
+      - "Session management (30-minute timeout)"
+      - "JWT implementation (httpOnly cookies)"
+      - "MFA enforcement for production"
+
+    authorization:
+      - "RBAC implementation"
+      - "Proper access controls"
+      - "Least privilege principle"
+
+    data_protection:
+      - "Patient data encryption at rest (AES-256)"
+      - "TLS 1.3 in transit"
+      - "No PII in logs"
+      - "No patient data in localStorage"
+
+    input_validation:
+      - "SQL injection prevention"
+      - "XSS prevention"
+      - "CSRF protection"
+      - "File upload validation"
+
+    secrets_management:
+      - "No hardcoded secrets"
+      - "Environment variables used"
+      - "AWS Secrets Manager in production"
+
+    audit_logging:
+      - "All patient access logged"
+      - "All auth events logged"
+      - "10-year retention"
+      - "Immutable logs"
+
+    compliance:
+      - "AU data residency (ap-southeast-2)"
+      - "Privacy Act compliance"
+      - "Deployment gates enforced"
+
+acceptance_criteria:
+  - "All 4 agent audits completed"
+  - "Findings categorized by severity (critical/high/medium/low)"
+  - "Each finding includes: description, risk, affected code, remediation"
+  - "Remediation plan with priority and effort estimates"
+  - "No critical or high findings left unaddressed"
+  - "Compliance checklist completed"
+  - "Security audit report generated"
+  - "Findings logged in orryx-knowledge/lessons-learned/"
+
+quality_requirements:
+  audit_depth:
+    code_review: true
+    automated_scanning: true
+    manual_testing: true
+    configuration_review: true
+
+  deliverables:
+    audit_report: true
+    findings_list: true
+    remediation_plan: true
+    compliance_checklist: true
+
+reviews:
+  founder_review: true
+  architecture_review: true
+
+estimated_effort: "12-16 hours (4 agents in parallel, 3-4 hours each)"
+
+audit_checklist:
+  owasp_top_10:
+    - "A01: Broken Access Control"
+    - "A02: Cryptographic Failures"
+    - "A03: Injection"
+    - "A04: Insecure Design"
+    - "A05: Security Misconfiguration"
+    - "A06: Vulnerable and Outdated Components"
+    - "A07: Identification and Authentication Failures"
+    - "A08: Software and Data Integrity Failures"
+    - "A09: Security Logging and Monitoring Failures"
+    - "A10: Server-Side Request Forgery"
+
+  security_policy_compliance:
+    - "MFA enforced for production access"
+    - "RBAC on all endpoints"
+    - "Sessions expire after 30 minutes"
+    - "Passwords hashed with bcrypt (10+ rounds)"
+    - "Patient data encrypted at rest (AES-256)"
+    - "TLS 1.3 for all traffic"
+    - "Audit logs immutable, 10-year retention"
+    - "AU data residency enforced"
+
+  privacy_act_compliance:
+    - "APP 1: Privacy policy exists and accessible"
+    - "APP 3: Consent before collection"
+    - "APP 6: Data use/disclosure compliant"
+    - "APP 11: Security measures adequate"
+    - "APP 12: Patient access within 30 days"
+    - "APP 13: Correction mechanisms exist"
+
+output_format:
+  report_sections:
+    - "Executive Summary"
+    - "Audit Scope"
+    - "Methodology"
+    - "Findings by Severity"
+    - "Compliance Status"
+    - "Remediation Plan"
+    - "Recommendations"
+    - "Appendix: Detailed Findings"
+
+  finding_template: |
+    ### Finding: [Title]
+
+    **Severity**: Critical | High | Medium | Low
+    **Category**: Authentication | Authorization | Data Protection | Input Validation | etc.
+    **Product**: Pillarworks | Triora | Infrastructure | All
+
+    **Description**:
+    [What is the vulnerability?]
+
+    **Risk**:
+    [What could happen if exploited?]
+
+    **Affected Code**:
+    ```
+    File: path/to/file.ts:line_number
+    [Code snippet]
+    ```
+
+    **Remediation**:
+    [How to fix it]
+
+    **Effort**: Low | Medium | High
+    **Priority**: P0 | P1 | P2 | P3
+
+risks:
+  - risk: "Audit may find critical vulnerabilities in production"
+    mitigation: "Prioritize by severity, fix critical/high immediately"
+
+  - risk: "Large number of findings overwhelming"
+    mitigation: "Group by severity and category, focus on high-impact first"
+
+  - risk: "False positives from automated scans"
+    mitigation: "Manual validation of all findings before reporting"
+
+dependencies:
+  - "Access to all product repos"
+  - "Access to AWS infrastructure"
+  - "Deployment configuration files"
+
+blockers: []
+
+tools:
+  automated:
+    - "npm audit (dependency vulnerabilities)"
+    - "Snyk (container and code scanning)"
+    - "ESLint security plugins"
+    - "git-secrets (secrets detection)"
+
+  manual:
+    - "Code review"
+    - "API testing (Postman/curl)"
+    - "Configuration review"
+
+result:
+  status: null
+  completed_date: null
+  total_findings: null
+  by_severity:
+    critical: null
+    high: null
+    medium: null
+    low: null
+  compliance_score: null
+
+learnings:
+  patterns_discovered: []
+  issues_encountered: []
+  improvements_suggested: []
