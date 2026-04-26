@@ -1,0 +1,129 @@
+# Orryx Repository Registry
+# Master list of all Orryx repositories
+
+version: "1.0"
+last_updated: "2026-04-27T14:00:00Z"
+updated_by: "founder"
+
+# CONTROL & GOVERNANCE REPOS
+control:
+  - repo_name: orryx-control-plane
+    type: control-plane
+    owner: founder
+    status: active
+    url: https://github.com/orryx/orryx-control-plane
+    local_path: ../orryx-control-plane
+    description: "Central orchestration and task management"
+    access: all_agents
+
+  - repo_name: orryx-governance
+    type: governance
+    owner: founder
+    status: active
+    url: https://github.com/orryx/orryx-governance
+    local_path: ../orryx-governance
+    description: "Security, compliance, and financial policies"
+    access: read_all_write_security
+
+  - repo_name: orryx-standards
+    type: standards
+    owner: founder
+    status: active
+    url: https://github.com/orryx/orryx-standards
+    local_path: ../orryx-standards
+    description: "Technical standards and patterns"
+    sync_to:
+      - pillarworks
+      - triora
+      - orryx
+      - orryx-flow
+    access: read_all_write_architect
+
+  - repo_name: orryx-knowledge
+    type: knowledge-base
+    owner: all_teams
+    status: active
+    url: https://github.com/orryx/orryx-knowledge
+    local_path: ../orryx-knowledge
+    description: "Domain knowledge, patterns, and lessons learned"
+    access: read_all_write_all
+
+# PRODUCT REPOS
+products:
+  - repo_name: pillarworks
+    type: product
+    owner: pillarworks_team
+    status: active
+    url: https://github.com/orryx/pillarworks
+    local_path: ../pillarworks-build-mvp
+    description: "GP-facing CDSS system"
+    tech_stack:
+      frontend: react-typescript-vite
+      backend: node-typescript-express
+      database: postgresql
+    inherits_from:
+      - orryx-standards
+      - orryx-governance
+      - orryx-knowledge
+
+  - repo_name: triora
+    type: product
+    owner: triora_team
+    status: planned
+    url: https://github.com/orryx/triora
+    local_path: ../triora
+    description: "Patient management system"
+    tech_stack:
+      frontend: react-typescript-nextjs
+      backend: node-typescript-nestjs
+      database: postgresql
+    inherits_from:
+      - orryx-standards
+      - orryx-governance
+      - orryx-knowledge
+
+  - repo_name: orryx
+    type: product
+    owner: platform_team
+    status: planned
+    url: https://github.com/orryx/orryx
+    local_path: ../orryx
+    description: "Parent platform"
+    inherits_from:
+      - orryx-standards
+      - orryx-governance
+      - orryx-knowledge
+
+  - repo_name: orryx-flow
+    type: product
+    owner: platform_team
+    status: planned
+    url: https://github.com/orryx/orryx-flow
+    local_path: ../orryx-flow
+    description: "Workflow engine"
+    inherits_from:
+      - orryx-standards
+      - orryx-governance
+      - orryx-knowledge
+
+# SHARED CAPABILITY REPOS (Deferred)
+shared:
+  - repo_name: orryx-packages
+    type: shared-packages
+    status: deferred
+    trigger: "When code duplicated across 2+ products"
+
+  - repo_name: orryx-design-system
+    type: ui-components
+    status: deferred
+    trigger: "When UI components duplicated across 2+ products"
+
+  - repo_name: orryx-infra
+    type: infrastructure
+    status: deferred
+    trigger: "When infrastructure patterns repeated"
+
+  - repo_name: orryx-services
+    type: backend-services
+    status: deferred
+    trigger: "When backend logic should be shared service"

@@ -1,0 +1,106 @@
+# Task Packet Schema v1.0
+# Standard format for all Orryx development tasks
+
+schema_version: "1.0"
+
+required_fields:
+  - task_id
+  - created
+  - created_by
+  - priority
+  - status
+  - type
+  - target
+  - title
+  - objective
+  - acceptance_criteria
+
+fields:
+  task_id:
+    type: string
+    format: "TP-YYYY-NNN"
+    example: "TP-2026-001"
+
+  created:
+    type: datetime
+    format: ISO8601
+
+  created_by:
+    type: string
+    enum: [founder, human, agent]
+
+  priority:
+    type: enum
+    values: [critical, high, medium, low]
+
+  status:
+    type: enum
+    values: [queued, active, in_review, completed, failed, blocked]
+
+  type:
+    type: enum
+    values: [feature, bugfix, refactor, security, audit, migration, infrastructure]
+
+  execution_pattern:
+    type: enum
+    values: [standard, deep_research, swarming, parallel, ralph_loop, migration]
+    default: standard
+
+  target:
+    product: string
+    repo: string
+    branch: string
+
+  title:
+    type: string
+    max_length: 100
+
+  objective:
+    type: string
+
+  context:
+    type: string
+    optional: true
+
+  context_refs:
+    governance:
+      repo: orryx-governance
+      files: [array]
+    standards:
+      repo: orryx-standards
+      files: [array]
+    knowledge:
+      repo: orryx-knowledge
+      files: [array]
+
+  acceptance_criteria:
+    type: array
+    min_items: 1
+
+  quality_requirements:
+    tests_required: bool
+    min_coverage: int
+    security_review: bool
+    architecture_review: bool
+
+  reviews:
+    qa:
+      required: bool
+      status: enum [null, pass, fail]
+      report: string
+    security:
+      required: bool
+      status: enum [null, pass, fail]
+      report: string
+
+  result:
+    status: enum [null, success, partial, failed]
+    pr_url: string
+    summary: string
+    files_changed: [array]
+    completed_at: datetime
+
+  learnings:
+    patterns_discovered: [array]
+    issues_encountered: [array]
+    improvements_suggested: [array]
