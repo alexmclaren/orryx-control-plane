@@ -131,7 +131,7 @@ class TaskOrchestrator:
 
         # Check blockers
         if task.get('blockers'):
-            print("\n⚠️  BLOCKERS DETECTED:")
+            print("\n[WARN]  BLOCKERS DETECTED:")
             for blocker in task['blockers']:
                 print(f"  - {blocker['blocker']}")
                 print(f"    Resolution: {blocker['resolution']}")
@@ -221,12 +221,12 @@ class TaskOrchestrator:
         package_json = repo_path / 'package.json'
         if not package_json.exists():
             verification_results['errors'].append("No package.json found - cannot run tests")
-            print("⚠️  No package.json found")
+            print("[WARN]  No package.json found")
             return False, verification_results
 
         # Run npm test
         if testing_reqs.get('unit_tests') or testing_reqs.get('integration_tests'):
-            print("\n🧪 Running tests...")
+            print("\n[TESTS] Running tests...")
             try:
                 result = subprocess.run(
                     ['npm', 'test', '--', '--reporter=verbose'],
@@ -253,28 +253,28 @@ class TaskOrchestrator:
                     verification_results['tests_passed'] = result.returncode == 0
 
                     if verification_results['tests_passed']:
-                        print(f"✅ Tests PASSED ({verification_results['test_count']} tests)")
+                        print(f"[OK] Tests PASSED ({verification_results['test_count']} tests)")
                     else:
-                        print(f"❌ Tests FAILED ({verification_results['failed_count']} failures)")
+                        print(f"[FAIL] Tests FAILED ({verification_results['failed_count']} failures)")
                         verification_results['errors'].append(f"{verification_results['failed_count']} test(s) failed")
                 else:
                     # Fallback: check exit code
                     verification_results['tests_passed'] = result.returncode == 0
-                    print(f"{'✅' if verification_results['tests_passed'] else '❌'} Tests {'PASSED' if verification_results['tests_passed'] else 'FAILED'}")
+                    print(f"{'[OK]' if verification_results['tests_passed'] else '[FAIL]'} Tests {'PASSED' if verification_results['tests_passed'] else 'FAILED'}")
 
             except subprocess.TimeoutExpired:
                 verification_results['errors'].append("Test execution timed out (5 min)")
-                print("❌ Tests timed out")
+                print("[FAIL] Tests timed out")
             except FileNotFoundError:
                 verification_results['errors'].append("npm command not found")
-                print("❌ npm not found")
+                print("[FAIL] npm not found")
             except Exception as e:
                 verification_results['errors'].append(f"Test execution error: {str(e)}")
-                print(f"❌ Error running tests: {e}")
+                print(f"[FAIL] Error running tests: {e}")
 
         # Run coverage check
         min_coverage = verification_results['min_coverage_required']
-        print(f"\n📊 Checking coverage (minimum: {min_coverage}%)...")
+        print(f"\n[COVERAGE] Checking coverage (minimum: {min_coverage}%)...")
 
         try:
             result = subprocess.run(
@@ -296,22 +296,22 @@ class TaskOrchestrator:
                 verification_results['coverage_met'] = coverage >= min_coverage
 
                 if verification_results['coverage_met']:
-                    print(f"✅ Coverage: {coverage}% (>= {min_coverage}%)")
+                    print(f"[OK] Coverage: {coverage}% (>= {min_coverage}%)")
                 else:
-                    print(f"❌ Coverage: {coverage}% (< {min_coverage}%)")
+                    print(f"[FAIL] Coverage: {coverage}% (< {min_coverage}%)")
                     verification_results['errors'].append(f"Coverage {coverage}% below minimum {min_coverage}%")
             else:
-                print("⚠️  Could not parse coverage percentage")
+                print("[WARN]  Could not parse coverage percentage")
 
         except subprocess.TimeoutExpired:
             verification_results['errors'].append("Coverage check timed out")
-            print("❌ Coverage check timed out")
+            print("[FAIL] Coverage check timed out")
         except Exception as e:
-            print(f"⚠️  Coverage check error: {e}")
+            print(f"[WARN]  Coverage check error: {e}")
 
         # Security scan (npm audit)
         if security_reqs.get('security_scan'):
-            print("\n🔒 Running security scan...")
+            print("\n[SECURITY] Running security scan...")
             try:
                 result = subprocess.run(
                     ['npm', 'audit', '--json'],
@@ -333,16 +333,16 @@ class TaskOrchestrator:
                     verification_results['security_issues'] = high + critical
 
                     if verification_results['security_issues'] == 0:
-                        print(f"✅ No high/critical security issues")
+                        print(f"[OK] No high/critical security issues")
                     else:
-                        print(f"❌ {verification_results['security_issues']} high/critical security issues found")
+                        print(f"[FAIL] {verification_results['security_issues']} high/critical security issues found")
                         verification_results['errors'].append(f"{verification_results['security_issues']} security issues")
 
                 except json.JSONDecodeError:
-                    print("⚠️  Could not parse security scan results")
+                    print("[WARN]  Could not parse security scan results")
 
             except Exception as e:
-                print(f"⚠️  Security scan error: {e}")
+                print(f"[WARN]  Security scan error: {e}")
 
         # Determine overall gate status
         gate_checks = []
@@ -361,9 +361,9 @@ class TaskOrchestrator:
         # Print summary
         print(f"\n{'='*60}")
         if verification_results['gate_passed']:
-            print("✅ QUALITY GATES: PASSED")
+            print("[OK] QUALITY GATES: PASSED")
         else:
-            print("❌ QUALITY GATES: FAILED")
+            print("[FAIL] QUALITY GATES: FAILED")
             print("\nErrors:")
             for error in verification_results['errors']:
                 print(f"  - {error}")
@@ -470,7 +470,7 @@ def main():
         verification_file = control_plane_root / "context" / f"{task_id}-verification.json"
 
         if not verification_file.exists() and not force:
-            print("❌ ERROR: Quality gates have not been verified")
+            print("[FAIL] ERROR: Quality gates have not been verified")
             print(f"\nRun verification first:")
             print(f"  python scripts/execution/orchestrate.py verify {task_id}")
             print(f"\nOr use --force to bypass verification (NOT RECOMMENDED)")
@@ -482,7 +482,7 @@ def main():
                 verification_results = json.load(f)
 
             if not verification_results.get('gate_passed', False) and not force:
-                print("❌ ERROR: Quality gates FAILED")
+                print("[FAIL] ERROR: Quality gates FAILED")
                 print("\nErrors:")
                 for error in verification_results.get('errors', []):
                     print(f"  - {error}")

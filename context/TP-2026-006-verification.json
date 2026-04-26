@@ -1,0 +1,18 @@
+{
+  "tests_run": false,
+  "tests_passed": false,
+  "test_count": 0,
+  "failed_count": 0,
+  "coverage_measured": false,
+  "coverage_percent": 0.0,
+  "min_coverage_required": 80,
+  "coverage_met": false,
+  "security_scan_run": false,
+  "security_issues": 0,
+  "secrets_check_run": false,
+  "secrets_found": 0,
+  "gate_passed": false,
+  "errors": [
+    "npm command not found"
+  ]
+}
