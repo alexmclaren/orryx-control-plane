@@ -416,7 +416,7 @@ def main():
         print("  python orchestrate.py list [status]")
         print("  python orchestrate.py execute <task-id> [--dry-run]")
         print("  python orchestrate.py verify <task-id>")
-        print("  python orchestrate.py complete <task-id> [--force]")
+        print("  python orchestrate.py complete <task-id> [--force] [--json '<json-data>']")
         sys.exit(1)
 
     # Find control plane root
@@ -466,6 +466,13 @@ def main():
         task_id = sys.argv[2]
         force = "--force" in sys.argv
 
+        # Check for --json parameter
+        json_data = None
+        for i, arg in enumerate(sys.argv):
+            if arg == "--json" and i + 1 < len(sys.argv):
+                json_data = sys.argv[i + 1]
+                break
+
         # Check if verification has been run
         verification_file = control_plane_root / "context" / f"{task_id}-verification.json"
 
@@ -491,10 +498,13 @@ def main():
                 print(f"\nOr use --force to complete anyway (NOT RECOMMENDED)")
                 sys.exit(1)
 
-        # Get results from user
-        print("Quality gates passed. Enter completion results (as JSON):")
-        results_json = input()
-        results = json.loads(results_json)
+        # Get results from user (either from --json flag or interactive input)
+        if json_data:
+            results = json.loads(json_data)
+        else:
+            print("Quality gates passed. Enter completion results (as JSON):")
+            results_json = input()
+            results = json.loads(results_json)
 
         # Merge verification results if available
         if verification_file.exists():
