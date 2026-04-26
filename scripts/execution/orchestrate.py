@@ -233,7 +233,8 @@ class TaskOrchestrator:
                     cwd=repo_path,
                     capture_output=True,
                     text=True,
-                    timeout=300  # 5 minute timeout
+                    timeout=300,  # 5 minute timeout
+                    shell=True
                 )
 
                 verification_results['tests_run'] = True
@@ -282,7 +283,8 @@ class TaskOrchestrator:
                 cwd=repo_path,
                 capture_output=True,
                 text=True,
-                timeout=300
+                timeout=300,
+                shell=True
             )
 
             verification_results['coverage_measured'] = True
@@ -318,7 +320,8 @@ class TaskOrchestrator:
                     cwd=repo_path,
                     capture_output=True,
                     text=True,
-                    timeout=60
+                    timeout=60,
+                    shell=True
                 )
 
                 verification_results['security_scan_run'] = True
