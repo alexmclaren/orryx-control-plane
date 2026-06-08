@@ -1,0 +1,58 @@
+# Orryx Consulting — North-Star & Strategic Goals
+# Read by: orryx-compass (Strategic dashboard)
+version: "1.0"
+last_updated: "2026-06-08"
+owner: founder
+
+north_star:
+  statement: >
+    The trusted AI & automation advisory for Australian professional-services
+    and small businesses — high-touch in feel, affordable because delivery is
+    automated.
+  primary_metric: "Monthly recurring revenue from advisory retainers (A$)"
+  target:
+    value_aud: 10000
+    by: "2026-12-31"
+
+positioning:
+  market: "Australia"
+  model: "High-touch advisory; delivery automated behind the scenes"
+  beachhead: "Professional-services cluster (accounting, legal, advisory, agencies, bookkeeping)"
+  beachhead_secondary: "Property / strata management"
+  go_to_market: "Focused marketing (spear-tip), flexible delivery (wide aperture)"
+  brand: "orryx.dev = advisory front; subsidiaries kept separate and NOT used as proof"
+  differentiator: >
+    Boutique-quality AI guidance at accessible prices because we automate our own
+    delivery — and we prove capability with working example solutions, not claims.
+
+strategic_goals:
+  - id: SG-1
+    title: "Live conversion engine"
+    description: "A stranger can travel traffic -> booked discovery call -> paid Assessment, unaided."
+    target: "Lead capture live by end of Sprint 2"
+    metric: "conversion_path_live"
+    status: not_started
+  - id: SG-2
+    title: "First paying clients + real references"
+    description: "2-3 foundation clients producing nameable case studies."
+    target: "3 paid Assessments; 1 retainer"
+    metric: "assessments_sold, retainers"
+    status: not_started
+  - id: SG-3
+    title: "Productised delivery (margin + accessibility)"
+    description: "Automated Assessment pipeline enabling ~A$1,500 delivery at healthy margin."
+    target: "Assessment delivery <= 0.5 founder-days"
+    status: not_started
+  - id: SG-4
+    title: "Strategic visibility"
+    description: "orryx-compass surfaces progress, monetisation, and human actions."
+    target: "Dashboard reading live artifacts"
+    status: not_started
+
+guardrails:
+  - "No fabricated proof — enforced by CI gate (no placeholder testimonials, no unearned metrics)."
+  - "No subsidiaries (Triora, Pillarworks, orryx-flow, Fertility) referenced as proof."
+  - "No founder as public marketing face — named delivery lead on discovery calls only."
+  - "Example solutions framed as capability demos, NEVER as client outcomes."
+  - "Don't build domain-server products without a signed client (demand-pull only)."
+  - "Buy commodity, self-host the glue, build the differentiator later."

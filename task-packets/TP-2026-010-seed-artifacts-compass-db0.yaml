@@ -1,0 +1,50 @@
+task_id: "TP-2026-010"
+title: "Seed delivery artifacts + orryx-compass DB-0 (schemas + parsers)"
+created_by: "founder"
+created_date: "2026-06-08"
+priority: "high"
+status: "active"
+
+execution_pattern: "standard"
+
+target:
+  product: "orryx-consulting"
+  repo: "orryx-compass"
+  branch: "feat/architect-s0-delivery-plan"
+
+objective: |
+  Seed the on-disk artifact set in orryx-control-plane (DONE in this branch) and build the
+  orryx-compass DB-0 layer: schemas + parsers that read the artifacts to JSON, so the dashboard
+  has live data on day one. No DB — files are the source of truth (mission-control philosophy).
+
+context_refs:
+  knowledge:
+    - "orryx-knowledge/patterns (dashboard / artifact-reading patterns)"
+
+acceptance_criteria:
+  - "north-star.yaml, monetisation.yaml, human-actions/queue.yaml committed (DONE)"
+  - "CONVERSION_DELIVERY_PLAN.md + sprint-0-plan.md committed (DONE)"
+  - "orryx-compass repo scaffolded (Vite+React+TS)"
+  - "Parsers read all 6 artifact types and validate against a schema"
+  - "A static read renders north-star + monetisation + human-action data as JSON"
+  - "reports/ralph-index.json generator stub in place"
+
+quality_requirements:
+  tests_required: true
+  min_coverage: 60
+  security_review: false
+  architecture_review: true
+
+reviews:
+  qa: { required: true, status: null, report: "" }
+  security: { required: false, status: null, report: "" }
+
+risks:
+  - risk: "Artifact schema drift breaks the dashboard silently"
+    mitigation: "Schema-validate on parse; surface STALE/INVALID honestly"
+
+dependencies: []
+blockers: []
+
+result: { status: null, pr_url: "", summary: "", files_changed: [], completed_at: null }
+learnings: { patterns_discovered: [], issues_encountered: [], improvements_suggested: [] }

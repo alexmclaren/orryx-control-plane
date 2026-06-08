@@ -1,0 +1,60 @@
+# Orryx Consulting — Human Action Queue
+# Read by: orryx-compass (DO NOW / DECIDE TODAY / NEEDS JUDGEMENT columns)
+# type: APPROVE | DECIDE | JUDGE | UNBLOCK
+# column mapping: DECIDE/APPROVE -> DECIDE TODAY ; JUDGE -> NEEDS JUDGEMENT ; UNBLOCK -> DO NOW
+version: "1.0"
+last_updated: "2026-06-08"
+
+items:
+  - id: HA-001
+    type: DECIDE
+    title: "Confirm n8n / Temporal self-hosting limits"
+    detail: >
+      Founder to state the 'limits' on n8n/Temporal (capacity / cost / familiarity)
+      so DEC-01 finalises. Fallback if no self-host: hosted low-code (n8n-cloud / Make).
+    blocks: [TP-2026-009]
+    unblocks_count: 2
+    raised_by: architect-agent
+    status: open
+    age_days: 0
+
+  - id: HA-002
+    type: DECIDE
+    title: "Provide 3-5 example / conceptual solutions for the proof set"
+    detail: >
+      Must mirror sellable automations (e.g. inbox triage, client follow-up agent,
+      document intake, automated reporting). These are proof + product seed + dogfood.
+    blocks: [proof-page-s1, example-solutions-stream]
+    unblocks_count: 2
+    raised_by: architect-agent
+    status: open
+    age_days: 0
+
+  - id: HA-003
+    type: APPROVE
+    title: "Approve final positioning statement (north-star.yaml)"
+    blocks: [TP-s1-home]
+    unblocks_count: 1
+    raised_by: architect-agent
+    status: open
+    age_days: 0
+
+  - id: HA-004
+    type: APPROVE
+    title: "Name the delivery lead surfaced on discovery calls (DEC-04 option a)"
+    detail: "Not a public marketing persona — the named human a prospect meets 1:1."
+    blocks: [booking-flow-s2]
+    unblocks_count: 1
+    raised_by: architect-agent
+    status: open
+    age_days: 0
+
+  - id: HA-005
+    type: APPROVE
+    title: "GO-LIVE approval for the conversion path"
+    detail: "Founder sign-off before the lead-capture path goes public (end Sprint 2)."
+    blocks: [go-live]
+    unblocks_count: 0
+    raised_by: architect-agent
+    status: pending
+    age_days: 0

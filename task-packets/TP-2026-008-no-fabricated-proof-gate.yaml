@@ -1,0 +1,50 @@
+task_id: "TP-2026-008"
+title: "No-fabricated-proof CI gate + strip all fake proof"
+created_by: "founder"
+created_date: "2026-06-08"
+priority: "critical"
+status: "queued"
+
+execution_pattern: "ralph_loop"
+
+target:
+  product: "orryx-consulting"
+  repo: "orryx-website"
+  branch: "feat/engineer-s0-proof-gate"
+
+objective: |
+  Make fabricated proof technically impossible to ship. Remove every placeholder/unearned
+  trust signal and add a CI gate that fails the build if any returns. This is the structural
+  fix for the trust problem and a hard guardrail from DR-2026-001 (DEC-04).
+
+context_refs:
+  knowledge:
+    - "orryx-knowledge/anti-patterns/common-mistakes.md"
+
+acceptance_criteria:
+  - "Removed: 3 placeholder testimonials (placehold.co logos, generic names)"
+  - "Removed: 'Proven across 50+ implementations'"
+  - "Removed: 'Trusted by ... 40+ hours per week' and unattributed 70%/50% metrics"
+  - "CI gate greps for: placehold.co, '50+ implementations', '40+ hours', known fake names, 'client achieved'"
+  - "Gate fails the build on any match; passes on the cleaned site"
+  - "Gate documented so future demo content cannot present capability as client outcome"
+
+quality_requirements:
+  tests_required: true
+  min_coverage: 0
+  security_review: false
+  architecture_review: false
+
+reviews:
+  qa: { required: true, status: null, report: "" }
+  security: { required: false, status: null, report: "" }
+
+risks:
+  - risk: "Legitimate future case studies blocked by the gate"
+    mitigation: "Allowlist verified, Trust-Steward-approved case studies with a signed marker"
+
+dependencies: []
+blockers: []
+
+result: { status: null, pr_url: "", summary: "", files_changed: [], completed_at: null }
+learnings: { patterns_discovered: [], issues_encountered: [], improvements_suggested: [] }

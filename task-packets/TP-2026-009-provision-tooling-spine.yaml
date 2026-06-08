@@ -1,0 +1,57 @@
+task_id: "TP-2026-009"
+title: "Provision the tooling spine (n8n, Cal.com, SES)"
+created_by: "founder"
+created_date: "2026-06-08"
+priority: "high"
+status: "blocked"
+
+execution_pattern: "standard"
+
+target:
+  product: "orryx-consulting"
+  repo: "orryx-website"
+  branch: "feat/engineer-s0-tooling"
+
+objective: |
+  Stand up the lead-capture orchestration spine, decoupled from the heavy platform.
+  n8n (self-hosted) = orchestration; Cal.com = booking; AWS SES = email. The orryx-compass
+  artifact store doubles as the lightweight CRM (n8n appends leads to monetisation.yaml pipeline).
+  Principle (DEC-01): buy commodity, self-host the glue, build the differentiator later.
+
+context_refs:
+  standards:
+    - "orryx-standards/terraform/modules (AWS) "
+  governance:
+    - "orryx-governance/compliance/au-privacy-act.md (lead data residency ap-southeast-2)"
+
+acceptance_criteria:
+  - "n8n reachable (self-hosted) OR HA-001 fallback (n8n-cloud/Make) chosen and provisioned"
+  - "Cal.com booking link operational"
+  - "SES verified sender + transactional send working"
+  - "n8n webhook -> append lead to strategy/monetisation.yaml pipeline (round-trip tested)"
+  - "Lead data stored in ap-southeast-2; APP obligations from R-02 met"
+
+quality_requirements:
+  tests_required: true
+  min_coverage: 0
+  security_review: true
+  architecture_review: true
+
+reviews:
+  qa: { required: true, status: null, report: "" }
+  security: { required: true, status: null, report: "" }
+
+risks:
+  - risk: "Self-hosting n8n exceeds capacity/cost limits"
+    mitigation: "HA-001 decides; hosted fallback ready"
+  - risk: "Lead PII handling non-compliant"
+    mitigation: "Apply R-02 findings; AU residency; minimal retention"
+
+dependencies:
+  - "HA-001 (n8n/Temporal limits) resolved"
+  - "R-02 (AU APP obligations for lead data)"
+blockers:
+  - "HA-001 open"
+
+result: { status: null, pr_url: "", summary: "", files_changed: [], completed_at: null }
+learnings: { patterns_discovered: [], issues_encountered: [], improvements_suggested: [] }
