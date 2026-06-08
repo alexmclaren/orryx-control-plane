@@ -1,0 +1,56 @@
+# Orryx Consulting — Monetisation & Funnel
+# Read by: orryx-compass (Monetisation panel). Funnel actuals synced by n8n (DB-3).
+version: "1.0"
+last_updated: "2026-06-08"
+currency: AUD
+
+north_star_mrr:
+  target: 10000
+  actual: 0
+
+offer:
+  flagship:
+    name: "AI Opportunity Assessment"
+    price: 1500            # accessible entry; productised; rises with proof
+    model: "fixed-fee, productised, credited toward implementation"
+    duration: "~1 week"
+    guarantee: "money-back / actionable-plan-or-fee-back"
+    deliverables:
+      - "Opportunity Map (ranked by ROI vs effort, plain English)"
+      - "Top 3 quick wins with estimated time/$ saved"
+      - "Recommended first automation + how it works"
+      - "Costed implementation roadmap (the upsell)"
+      - "Live readout / Q&A"
+  lead_magnet:
+    name: "AI Opportunity Snapshot"
+    price: 0
+    role: "Free small-business on-ramp; feeds the paid Assessment"
+  implementation:
+    model: "scoped, custom quote"
+  retainer:
+    name: "AI partner (managed)"
+    model: "monthly"
+    range_aud: [2000, 8000]
+
+funnel:
+  period: monthly
+  stages:
+    visitors:        { target: 800, actual: 0 }
+    leads:           { target: 40,  actual: 0 }
+    discovery_calls: { target: 8,   actual: 0 }
+    assessments:     { target: 3,   actual: 0 }
+    implementations: { target: 1,   actual: 0 }
+    retainers:       { target: 1,   actual: 0 }
+
+pipeline: []   # [{firm, stage, value_aud, next_action, owner}] — appended by n8n on new lead
+
+foundation_clients:
+  cap: 3
+  filled: 0
+  note: "Discounted/free engagements to manufacture the first real, nameable case studies."
+
+revenue:
+  mrr_actual: 0
+  assessments_sold_total: 0
+  cash_collected_total_aud: 0
+  time_to_first_revenue_days: null

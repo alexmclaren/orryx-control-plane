@@ -1,0 +1,71 @@
+task_id: "TP-2026-008"
+title: "No-fabricated-proof CI gate + strip all fake proof"
+created_by: "founder"
+created_date: "2026-06-08"
+priority: "critical"
+status: "in_review"
+
+execution_pattern: "ralph_loop"
+
+target:
+  product: "orryx-consulting"
+  repo: "orryx-website"
+  branch: "feat/engineer-s0-proof-gate"
+
+objective: |
+  Make fabricated proof technically impossible to ship. Remove every placeholder/unearned
+  trust signal and add a CI gate that fails the build if any returns. This is the structural
+  fix for the trust problem and a hard guardrail from DR-2026-001 (DEC-04).
+
+context_refs:
+  knowledge:
+    - "orryx-knowledge/anti-patterns/common-mistakes.md"
+
+acceptance_criteria:
+  - "Removed: 3 placeholder testimonials (placehold.co logos, generic names)"
+  - "Removed: 'Proven across 50+ implementations'"
+  - "Removed: 'Trusted by ... 40+ hours per week' and unattributed 70%/50% metrics"
+  - "CI gate greps for: placehold.co, '50+ implementations', '40+ hours', known fake names, 'client achieved'"
+  - "Gate fails the build on any match; passes on the cleaned site"
+  - "Gate documented so future demo content cannot present capability as client outcome"
+
+quality_requirements:
+  tests_required: true
+  min_coverage: 0
+  security_review: false
+  architecture_review: false
+
+reviews:
+  qa: { required: true, status: null, report: "" }
+  security: { required: false, status: null, report: "" }
+
+risks:
+  - risk: "Legitimate future case studies blocked by the gate"
+    mitigation: "Allowlist verified, Trust-Steward-approved case studies with a signed marker"
+
+dependencies: []
+blockers: []
+
+result:
+  status: partial
+  pr_url: "https://github.com/alexmclaren/Orryx-Premium-Website/pull/1"
+  summary: >
+    Stripped public-surface fabricated proof (Hero 40+ hours; DualPath 50+ implementations +
+    'real client outcomes'; removed TransformationOutcomes metrics). Added CI gate
+    (verified passes clean / fails on reintroduction). Gate surfaced more fabricated mock
+    outcomes in src/data/clientAccountData.ts -> excluded + tracked in TP-007 for deletion.
+  files_changed:
+    - "src/components/Hero.tsx"
+    - "src/components/DualPathSection.tsx"
+    - "src/pages/Home.tsx"
+    - "src/pages/CapabilitiesHub.tsx"
+    - "scripts/check-no-fabricated-proof.mjs"
+    - ".github/workflows/proof-gate.yml"
+  completed_at: null
+learnings:
+  patterns_discovered:
+    - "A grep-based proof gate doubles as a discovery tool — found hidden fabricated mock data"
+  issues_encountered:
+    - "Fabricated outcomes also live in product/dashboard mock data (clientAccountData.ts)"
+  improvements_suggested:
+    - "TP-007 should delete the product/dashboard surface, then drop the gate exclusions"

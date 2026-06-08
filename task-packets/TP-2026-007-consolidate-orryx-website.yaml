@@ -1,0 +1,55 @@
+task_id: "TP-2026-007"
+title: "Consolidate websites into orryx-website + scaffold advisory site"
+created_by: "founder"
+created_date: "2026-06-08"
+priority: "high"
+status: "queued"
+
+execution_pattern: "ralph_loop"
+
+target:
+  product: "orryx-consulting"
+  repo: "orryx-website"
+  branch: "feat/hygiene-s0-consolidate"
+
+objective: |
+  Establish ONE advisory website repo and retire the fragmented iterations.
+  Consolidate from Orryx-Premium-Website (strip the marketplace/product surface);
+  archive Bold-Hero-Section-for-Orryx-Consultancy, Landing-Page---Waitlist, and the
+  orryx-brain archived hybrid site. Scaffold a clean Vite + React + TS app using the
+  orryx-brain design system, with all React/TS quality gates wired and green on an empty shell.
+
+context_refs:
+  standards:
+    - "orryx-standards/CLAUDE.md"
+  governance:
+    - "orryx-governance/compliance/au-privacy-act.md"
+
+acceptance_criteria:
+  - "orryx-website repo exists; builds; deploys a placeholder shell"
+  - "Marketplace, A$29/mo Autopilot, dual-path CTA, AIInfrastructure jargon REMOVED"
+  - "Bold-Hero, Landing-Waitlist, hybrid site archived (not deleted)"
+  - "eslint, prettier, tsc, vitest, playwright, lhci, npm audit wired in CI"
+  - "no-fabricated-proof gate present and passing"
+  - "Delete product/dashboard surface (src/components/{client,dashboard,director}, src/data/clientAccountData.ts) incl. fabricated mock outcomes; then remove the temporary EXCLUDE entries in scripts/check-no-fabricated-proof.mjs so the gate covers the whole tree"
+  - "Lighthouse >= 90 perf / 95 SEO / 95 a11y on the shell"
+
+quality_requirements:
+  tests_required: true
+  min_coverage: 60
+  security_review: false
+  architecture_review: true
+
+reviews:
+  qa: { required: true, status: null, report: "" }
+  security: { required: false, status: null, report: "" }
+
+risks:
+  - risk: "Stripping the product breaks shared components"
+    mitigation: "Lift only marketing components; leave platform untouched"
+
+dependencies: []
+blockers: []
+
+result: { status: null, pr_url: "", summary: "", files_changed: [], completed_at: null }
+learnings: { patterns_discovered: [], issues_encountered: [], improvements_suggested: [] }
