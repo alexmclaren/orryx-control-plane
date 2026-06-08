@@ -212,7 +212,7 @@ verification_plan:
     - "Error handling consistent"
     - "Session cleanup identical"
 
-  testing_matrix:
+  testing_matrix: |
     |              | Pillarworks | Triora | Orryx |
     |--------------|-------------|--------|-------|
     | Logout works | ✓           | ✓      | ✓     |
