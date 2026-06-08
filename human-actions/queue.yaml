@@ -32,7 +32,11 @@ items:
     blocks: [proof-page-s1, example-solutions-stream]
     unblocks_count: 2
     raised_by: architect-agent
-    status: open
+    status: resolved
+    resolution: >
+      APPROVED proof set 1-3: Client Onboarding Autopilot (hero), Smart Inbox & Enquiry Triage,
+      Document Intake & Extraction. Follow-Up Agent + Weekly Digest held as fast-follows.
+      See delivery/example-solutions.md.
     age_days: 0
 
   - id: HA-003
