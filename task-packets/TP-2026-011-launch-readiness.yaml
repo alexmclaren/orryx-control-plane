@@ -1,0 +1,72 @@
+task_id: "TP-2026-011"
+title: "Launch-readiness: act on conversion-swarm audit (AUDIT-2026-001)"
+created_by: "agent"
+created_date: "2026-06-08"
+priority: "high"
+status: "queued"
+
+execution_pattern: "swarming"
+
+target:
+  product: "orryx-consulting"
+  repo: "orryx-website"
+  branch: "feat/engineer-s1-launch-readiness"
+
+objective: |
+  Act on the 30-agent conversion audit (reports/AUDIT-2026-001-conversion-swarm.md).
+  The site cannot convert in its current state. Fix in two tracks:
+  (A) fork-independent launch-readiness fixes (buildable now);
+  (B) the funnel rebuild + voice unification (gated on founder decisions F1-F4 + facts).
+
+context_refs:
+  knowledge:
+    - "orryx-control-plane/reports/AUDIT-2026-001-conversion-swarm.md"
+  governance:
+    - "orryx-governance/compliance/au-privacy-act.md"
+
+acceptance_criteria:
+  # Track A — fork-independent (now)
+  - "Working mobile menu in Navbar (links + Book CTA)"
+  - "Dead product links fixed (Footer Marketplace -> /assessment; NotFound Log In/Marketplace removed)"
+  - "Home links into /examples and /assessment (funnel reachable)"
+  - "HIPAA/GDPR -> Privacy Act 1988 / APPs in customer-facing copy"
+  - "Base SEO: real title/meta/canonical/OG, lang=en-AU, robots.txt, sitemap.xml, Org/Service JSON-LD"
+  - "ScrollToTop at router level; per-page scroll effects removed"
+  - "tsc --noEmit added to build; ~40 strict errors fixed; dead deps + orphaned product code removed; React 18 createRoot"
+  - "Honest booking fallback (real mailto/Formspree + honest confirmation; no fake spinner)"
+  # Track B — gated on founder decisions
+  - "F1 booking model decided -> /book carries A$1,500 + credit + guarantee + 5 deliverables, single path"
+  - "F2 pricing decided; F3 beachhead narrowed; F4 guarantee defined objectively"
+  - "Voice unification: About/Methodology/BookSession/SolutionGrid -> plain-English SMB"
+  - "Accountability strip (ABN/contact/Solutions Leads/LinkedIn) + data-residency trust block (founder facts)"
+  - "Free 'AI Opportunity Snapshot' lead magnet + real capture"
+
+quality_requirements:
+  tests_required: true
+  min_coverage: 0
+  security_review: false
+  architecture_review: true
+
+reviews:
+  qa: { required: true, status: null, report: "" }
+  founder_review: true
+
+risks:
+  - risk: "Building Track B before F1-F4 decided wastes effort"
+    mitigation: "Execute Track A now; hold Track B for founder decisions"
+  - risk: "Live funnel wiring needs n8n/Cal.com/SES + CRM credentials"
+    mitigation: "Honest fallback now; full wiring when credentials provided (TP-2026-009)"
+
+dependencies:
+  - "Founder decisions F1-F4 + ABN/contact/data facts"
+  - "TP-2026-009 tooling spine for live funnel"
+
+blockers: []
+
+result: { status: null, pr_url: "", summary: "", files_changed: [], completed_at: null }
+learnings:
+  patterns_discovered:
+    - "30-agent audit+verify+strategy swarm surfaced a structurally-zero funnel + split-brain voice the per-file work missed"
+  issues_encountered: []
+  improvements_suggested:
+    - "Add a jargon-lint CI gate (ban 'agentic/future-state/operational intelligence/transformation') like the no-fabricated-proof gate"
