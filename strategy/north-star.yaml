@@ -21,6 +21,8 @@ positioning:
   beachhead_secondary: "Property / strata management"
   go_to_market: "Focused marketing (spear-tip), flexible delivery (wide aperture)"
   brand: "orryx.dev = advisory front; subsidiaries kept separate and NOT used as proof"
+  solutions_leads: ["Alex", "Tyson"]   # named humans on discovery calls (DEC-04 option a); NOT a public marketing face
+  positioning_status: "APPROVED 2026-06-08"
   differentiator: >
     Boutique-quality AI guidance at accessible prices because we automate our own
     delivery — and we prove capability with working example solutions, not claims.

@@ -15,7 +15,12 @@ items:
     blocks: [TP-2026-009]
     unblocks_count: 2
     raised_by: architect-agent
-    status: open
+    status: resolved
+    resolution: >
+      Monthly limits NOT being consumed — n8n/Temporal currently switched OFF pending reframe.
+      Capacity available. DECISION: n8n is the orchestration spine; the conversion lead-engine
+      is its first defined use. Temporal reserved for the Sprint-4 Assessment pipeline.
+      TP-2026-009 UNBLOCKED.
     age_days: 0
 
   - id: HA-002
@@ -36,7 +41,8 @@ items:
     blocks: [TP-s1-home]
     unblocks_count: 1
     raised_by: architect-agent
-    status: open
+    status: resolved
+    resolution: "Founder APPROVED positioning + differentiator + goals + guardrails (2026-06-08)."
     age_days: 0
 
   - id: HA-004
@@ -46,7 +52,8 @@ items:
     blocks: [booking-flow-s2]
     unblocks_count: 1
     raised_by: architect-agent
-    status: open
+    status: resolved
+    resolution: "Solutions Leads = Alex and Tyson (named humans on discovery calls). Not a public marketing face."
     age_days: 0
 
   - id: HA-005
