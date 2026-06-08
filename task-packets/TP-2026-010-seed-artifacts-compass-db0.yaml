@@ -3,7 +3,7 @@ title: "Seed delivery artifacts + orryx-compass DB-0 (schemas + parsers)"
 created_by: "founder"
 created_date: "2026-06-08"
 priority: "high"
-status: "active"
+status: "in_review"
 
 execution_pattern: "standard"
 
@@ -46,5 +46,20 @@ risks:
 dependencies: []
 blockers: []
 
-result: { status: null, pr_url: "", summary: "", files_changed: [], completed_at: null }
-learnings: { patterns_discovered: [], issues_encountered: [], improvements_suggested: [] }
+result:
+  status: partial
+  pr_url: "https://github.com/alexmclaren/orryx-compass/pull/1"
+  summary: >
+    orryx-compass repo created. DB-0 delivered: build-data.mjs parses all control-plane
+    artifacts to public/data/compass.json with honest observability (flags malformed
+    TP-2026-004 as a warning, not a crash). Vite+React+TS static read renders North-Star,
+    Monetisation funnel, Human-Action queue, Delivery, Artifact Health. tsc strict + vite build pass.
+  files_changed: ["scripts/build-data.mjs", "src/App.tsx", "src/lib/types.ts", "package.json", "vite.config.ts"]
+  completed_at: null
+learnings:
+  patterns_discovered:
+    - "Files-as-database parser with deterministic freshness (newest-mtime as clock) avoids ambient-time issues"
+  issues_encountered:
+    - "Pre-existing TP-2026-004 is malformed YAML (flagged by compass + spun off as a fix task)"
+  improvements_suggested:
+    - "DB-3 should sync live funnel/CRM data from n8n into monetisation.yaml"
