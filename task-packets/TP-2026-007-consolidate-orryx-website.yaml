@@ -31,6 +31,7 @@ acceptance_criteria:
   - "Bold-Hero, Landing-Waitlist, hybrid site archived (not deleted)"
   - "eslint, prettier, tsc, vitest, playwright, lhci, npm audit wired in CI"
   - "no-fabricated-proof gate present and passing"
+  - "Delete product/dashboard surface (src/components/{client,dashboard,director}, src/data/clientAccountData.ts) incl. fabricated mock outcomes; then remove the temporary EXCLUDE entries in scripts/check-no-fabricated-proof.mjs so the gate covers the whole tree"
   - "Lighthouse >= 90 perf / 95 SEO / 95 a11y on the shell"
 
 quality_requirements:
