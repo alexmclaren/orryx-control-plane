@@ -33,7 +33,7 @@ strategic_goals:
     description: "A stranger can travel traffic -> booked discovery call -> paid Assessment, unaided."
     target: "Lead capture live by end of Sprint 2"
     metric: "conversion_path_live"
-    status: not_started
+    status: in_progress  # 2026-06-21: lead capture LIVE (orryx.dev funnel -> forms.orryx.dev Worker -> D1+SES, Turnstile staged PR #19). Not yet full path to PAID (Cal.com booking embed + payment pending — Sprint 1).
   - id: SG-2
     title: "First paying clients + real references"
     description: "2-3 foundation clients producing nameable case studies."
@@ -47,9 +47,9 @@ strategic_goals:
     status: not_started
   - id: SG-4
     title: "Strategic visibility"
-    description: "orryx-compass surfaces progress, monetisation, and human actions."
+    description: "A dashboard surfaces progress, monetisation, and human actions. (orryx-mission-control is the live daily-driver ops dashboard; orryx-compass reads control-plane strategy/monetisation artifacts — dashboard consolidation pending, see estate plan.)"
     target: "Dashboard reading live artifacts"
-    status: not_started
+    status: in_progress  # 2026-06-21: mission-control LIVE. Monetisation panel + DB-3 sync (real MRR data) not yet built — Sprint 1.
 
 guardrails:
   - "No fabricated proof — enforced by CI gate (no placeholder testimonials, no unearned metrics)."
