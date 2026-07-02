@@ -29,7 +29,7 @@ control:
     type: standards
     owner: founder
     status: active
-    url: https://github.com/orryx/orryx-standards
+    url: https://github.com/alexmclaren/orryx-standards
     local_path: ../orryx-standards
     description: "Technical standards and patterns"
     sync_to:
