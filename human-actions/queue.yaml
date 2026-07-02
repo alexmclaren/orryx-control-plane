@@ -3,7 +3,7 @@
 # type: APPROVE | DECIDE | JUDGE | UNBLOCK
 # column mapping: DECIDE/APPROVE -> DECIDE TODAY ; JUDGE -> NEEDS JUDGEMENT ; UNBLOCK -> DO NOW
 version: "1.0"
-last_updated: "2026-06-08"
+last_updated: "2026-07-02"
 
 items:
   - id: HA-001
@@ -67,5 +67,343 @@ items:
     blocks: [go-live]
     unblocks_count: 0
     raised_by: architect-agent
+    status: resolved
+    resolution: >
+      APPROVED 2026-07-02. Cleaned origin/main (d12f4d6, fabricated claims stripped,
+      advisory-only) deploying to S3+CloudFront to replace the April build; live-bundle
+      verification in flight. Turnstile enforcement follows once the widget exists (HA-014).
+    age_days: 0
+
+  # --- Portfolio director triage 2026-07-02 (source: 4-repo assessment, orryx-flow session) ---
+
+  - id: HA-006
+    type: UNBLOCK
+    title: "Verify/execute bundled secret rotations (consulting-intake x19 + AKIA...B6MD key)"
+    detail: >
+      VERIFIED 2026-07-02 (read-only IAM/CloudTrail/SM; ledger entry in orryx-brain PR #177,
+      docs/audits/2026-05-AUDIT_REVERIFY.md): AKIA...B6MD = ROTATED (new key 2026-05-12, old
+      deleted 2026-06-10; was orryx.ec2's); pillarworks-bedrock key = user+key DELETED
+      2026-06-28; INTERNAL_API_KEY = ROTATED 2026-05-13/14 (self-documented in SM).
+      RESEND CLOSED 2026-07-02 (value-level verification): live key value != leaked
+      re_2rkiQnxj (no rotation needed) and the stale pre-audit 'Onboarding' key was DELETED
+      at Resend via API — only the live 'Orryx' key remains. REMAINING founder actions:
+      (1) confirm/revoke Cloudflare token id 25e037fb... in the CF dashboard (AWS copy
+      orryx/shared/cloudflare-api-token changed 2026-07-01, possibly correlated);
+      (2) optional hygiene: deactivate the never-used 2025-12 Clinical_Trials IAM key
+      AKIA...AYVV (second active key on that user; zero recorded use).
+      Steps: D:\state\operator-action-pack-2026-07.md.
+    blocks: [orryx-brain-session-123, portfolio-secret-hygiene]
+    unblocks_count: 3
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 0
+
+  - id: HA-007
+    type: UNBLOCK
+    title: "Pillarworks: Stripe LIVE activation (ABN + bank docs, 3 LIVE prices, beta coupon)"
+    detail: >
+      The only gap between Pillarworks and first revenue. Submit ABN/ACN + BSB/account +
+      rep ID to Stripe; create 3 LIVE recurring AUD prices (Starter/Pro/Enterprise) + 50%
+      beta coupon; then follow pillarworks-stripe-live-cutover runbook (load K8s secret,
+      rollout restart, real-card checkout + one refund). Engineering side is done and
+      TEST-verified.
+    blocks: [pw-mvp-004, pw-first-revenue]
+    unblocks_count: 2
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 0
+
+  - id: HA-008
+    type: UNBLOCK
+    title: "Pillarworks: Sentry DSN into K8s secret + confirm one real SES delivery"
+    detail: >
+      sentry_sdk.init() is a no-op until the prod DSN lands in pillarworks-secrets.
+      Also confirm one real external email delivers from noreply@pillarworks.orryx.dev
+      (not an [EMAIL STUB] log line). Both precede public beta.
+    blocks: [pw-public-beta]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 0
+
+  - id: HA-009
+    type: APPROVE
+    title: "Triora: PR-030 compliance sign-off — PHI FK migration ran without backup gate"
+    detail: >
+      The Wave A SET-NULL FK migration auto-ran on the live PHI database 2026-06-27 without
+      a backup-before-migrate step. AGENT PREP DONE 2026-07-02 — founder reviews+merges:
+      PR #127 (read-only FK verification script, SELECT-only, wired into run-admin-script
+      dropdown; run it post-merge to prove confdeltype='n' + sprint189_001) and PR #128
+      (backup gate: unconditional RDS snapshot before EVERY deploy, fail-closed, gates the
+      deploy job because entrypoint.sh migrates on container start; IAM grant is a separate
+      commit needing terraform apply BEFORE merge or deploys fail closed). Then sign off
+      SET-NULL retention in docs/compliance/COMPLIANCE_POSTURE.md and close PR-030.
+      Steps: D:\state\operator-action-pack-2026-07.md.
+    blocks: [ct-phi-compliance]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 0
+
+  - id: HA-010
+    type: APPROVE
+    title: "Orryx Flow D2: sign hosting ADR 0001 -> terraform apply (oflow.com.au is pre-staged)"
+    detail: >
+      docs/adr/0001-production-hosting-target.md awaits signature. Domain oflow.com.au,
+      hosted zone, and ACM cert in ap-southeast-2 are already provisioned; terraform
+      modules exist. Signing unblocks flow-mvp-005 infra, then 006 deploys and 012
+      pilot provisioning.
+    blocks: [flow-mvp-005, flow-mvp-006, flow-mvp-012]
+    unblocks_count: 3
+    raised_by: portfolio-director-agent
+    status: resolved
+    resolution: >
+      SIGNED 2026-07-02 (Option A, ECS Fargate) — commit fd8ae3d on develop; terraform
+      repaired for aws-provider v5 (02b0961) and staging plan is CLEAN: 104 to add,
+      ~AUD $395-410/mo (3x NAT gateways = ~$220 of that; single-NAT is the obvious
+      pre-apply trim). APPLY NOT RUN — operator reviews plan + two pre-apply items first:
+      provision orryx-flow-terraform-state S3 backend + DynamoDB lock table, and fix the
+      TF placeholder ACM cert (staging.orryx.com.au) vs the pre-staged oflow.com.au cert.
+    age_days: 0
+
+  - id: HA-011
+    type: APPROVE
+    title: "Orryx Flow D8: ratify flow-mvp-024 P1 oversight gates (U5 role allowlist + U1/U2 schema)"
+    detail: >
+      docs/plans/2026-06-27-004 (oversight class + Human+AI execution path) is design-complete.
+      Implementation is deliberately held until the operator ratifies the U5 clinical-approver
+      role allowlist (incl. the ADMIN question) and U1/U2 Task schema additions, to avoid
+      rework. This is the strategic keystone (makes zero-autonomous-clinical enforceable).
+    blocks: [flow-mvp-024-p1-implementation]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: resolved
+    resolution: >
+      RATIFIED 2026-07-02 (commit fd8ae3d, recorded in docs/plans/2026-06-27-004):
+      U5 allowlist = {CLINICIAN, NURSE, EMBRYOLOGIST, MANAGER}; PATIENT + RECEPTIONIST
+      excluded; ADMIN EXCLUDED from clinical approval; U1/U2 schema additions approved.
+      Gates AUTH + D8 (U1/U2) cleared; per-unit gates on U6/U6b/U7/U10-U13 still apply
+      at landing time. flow-mvp-024 P1 implementation UNBLOCKED.
+    age_days: 0
+
+  - id: HA-012
+    type: DECIDE
+    title: "Orryx Flow D3: engage counsel for Privacy Act (13 APPs) + NDB sign-off"
+    detail: >
+      docs/compliance/COMPLIANCE_POSTURE.md + ndb-response-plan.md are drafted and await
+      human/legal sign-off (flow-mvp-009). External process - can run in parallel with
+      everything else; gates pilot go-live (flow-mvp-014).
+    blocks: [flow-mvp-009, flow-mvp-011]
+    unblocks_count: 2
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 0
+
+  - id: HA-013
+    type: DECIDE
+    title: "Orryx Flow D4: identify + contract first pilot fertility clinic (DPA signed)"
+    detail: >
+      No clinic is named anywhere in scope. Longest-lead-time human gate on the Flow pilot
+      (flow-mvp-011 -> 014); worth starting outreach now even though infra/compliance
+      gates are still open.
+    blocks: [flow-mvp-011, flow-mvp-014]
+    unblocks_count: 2
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 0
+
+  # --- Portfolio director estate review 2026-07-02 (source: orryx-brain session; dedupes vs HA-006..013) ---
+
+  - id: HA-014
+    type: APPROVE
+    title: "Merge orryx-website PR #19 (Turnstile siteverify) + set the Turnstile secret"
+    detail: >
+      MERGED 2026-07-02 (it had been sitting as a DRAFT — marked ready + squash-merged).
+      REMAINING founder step (~2 min): create the Turnstile widget in the Cloudflare dash
+      (Managed mode; domains orryx.dev, localhost, 127.0.0.1) — neither the stored CF API
+      token nor wrangler OAuth has Turnstile scope. Hand the site key + secret key to an
+      agent session: it wires the site key into BookSession.tsx, sets TURNSTILE_SECRET_KEY
+      via wrangler, deploys, and curl-verifies the 403. See worker/TURNSTILE-GOLIVE.md.
+    blocks: [funnel-spam-protection]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 11
+
+  - id: HA-015
+    type: JUDGE
+    title: "Batch-review Pillarworks PR queue #253-#260 (8 PRs from bug-swarm/audit)"
+    detail: >
+      PRE-VERIFICATION COMPLETE 2026-07-02 — full merge/hold table at
+      D:\state\pillarworks-pr-verdicts-2026-07-02.md. #253/#254/#256 merged earlier;
+      #255/#257/#258 MERGED 2026-07-02 (operator-approved batch). IN FLIGHT (agent):
+      #260 conflict-resolution rebase (post-merge overlap in ai_extraction.py) and
+      #259 rework (fix the 3 billing-test regressions from price-id drift + add
+      TIER_LIMITS["starter"]) — founder re-reviews #259 when CI is green.
+      #259 must land before Stripe LIVE (HA-007).
+    blocks: [pillarworks-swarm-fixes]
+    unblocks_count: 8
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 5
+
+  - id: HA-016
+    type: JUDGE
+    title: "Clinical_trials PR #120 (OAIC export) — tagged [REQUIRES HUMAN REVIEW]"
+    detail: >
+      Privacy Act / OAIC compliance territory — correctly human-gated per governance Sec.7.
+      Companion #119 MERGED 2026-07-02 (pre-verified: SM ARNs live-checked against
+      task-def 448, no plaintext, CI green; bundles a correct ALB health-check-path fix).
+      Residual noted for follow-up: TF drift — iam.tf execution-role policy lacks
+      orryx/triora/* and live task def uses triora-ecs-execution-pilot vs TF's role, so
+      full terraform apply remains unsafe. REMAINING: founder performs the OAIC compliance
+      review of #120 and merges it.
+    blocks: [triora-compliance-prs]
+    unblocks_count: 2
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 5
+
+  - id: HA-017
+    type: DECIDE
+    title: "Repositioning reconciliation decisions R1-R4 (blocks Phase 2 website build)"
+    detail: >
+      PARTIALLY DECIDED 2026-07-02: R2 = advisory-only custom quote at launch (publish
+      catalog only after funnel live + first foundation deliveries); R3 = 5-8 foundation
+      clients at 25-30% off. STILL OPEN: R1 (founder wants a proper planning session on the
+      entry offer, not a snap decision — Assessment $1,500 vs Roadmap $490); R4 (founder
+      wants research first and wants medical/doctors included in the ICP consideration —
+      research task queued). Source: orryx-brain docs/strategy/
+      ORRYX_DEV_SMB_REPOSITIONING_PLAN.md Sec.10.
+    blocks: [repositioning-phase-2]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 21
+
+  - id: HA-018
+    type: DECIDE
+    title: "Confirm archival of 11 enterprise-domain stub repos (reversible)"
+    detail: >
+      orryx-{accounting,ai-automation,customer,data-analytics,hr,product,sales,strategy,
+      ui-design}+2 — pure README+package.json since Sept 2025, never wired into any workflow
+      (verified 3x in June census). Archive, not delete; reversible. Pending since 2026-06-21.
+    blocks: [estate-hygiene]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: resolved
+    resolution: >
+      CONFIRMED + EXECUTED 2026-07-02: the 9 named repos content-verified as stubs and
+      ARCHIVED on GitHub (reversible). The "+2" were NOT archived — the only candidates
+      (orryx-engineering, orryx-product-template) are not stubs (infra/docker/monitoring
+      dirs; full backend/frontend/terraform template). If the census meant different repos,
+      name them and they get the same treatment.
+    age_days: 11
+
+  - id: HA-019
+    type: DECIDE
+    title: "Dashboard reconciliation: delivery-dashboard vs mission-control vs compass"
+    detail: >
+      Three repos overlap on ops dashboards. VERIFIED 2026-07-02: localhost:4317 (the daily
+      driver) is served by orryx-delivery-dashboard — contradicting the June census which
+      called it a stalled precursor to mission-control. Founder to confirm which is canonical;
+      the other(s) get archived or clearly demoted. All three auto-push daily.
+    blocks: [estate-hygiene]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: resolved
+    resolution: >
+      DECIDED 2026-07-02: orryx-delivery-dashboard is CANONICAL (it serves :4317 and the
+      Human Actions panel). mission-control and compass to be demoted (README banner +
+      stop featuring in routines) — demotion mechanics to be executed as estate-hygiene
+      follow-up; do not archive until their auto-push routines are retargeted.
+    age_days: 0
+
+  # --- Triora program-director review 2026-07-02 (Clinical.Trials session; complements HA-009/HA-016) ---
+
+  - id: HA-020
+    type: UNBLOCK
+    title: "Triora: SSO-regress Wave B auth changes (#111) against the real IdP"
+    detail: >
+      JWT revocation + SAML replay/audience binding + break-glass gate went LIVE 2026-06-27
+      and were never regressed against a real identity provider. Fail-closed design means a
+      mismatch locks hospital SSO users out. CONSOLIDATED CHECKLIST ready:
+      D:\state\ha-020-sso-regression-checklist-2026-07.md (fill [OPERATOR] gaps first).
+      CODE-CHECK 2026-07-02: enforcement verdict PARTIAL — HTTP+refresh paths genuinely
+      enforced fail-closed; WebSocket + optional-auth bypasses found, held fix open as
+      PR #129 [REQUIRES HUMAN REVIEW] (founder merges). Needs operator IdP credentials;
+      agent can drive the checklist.
+    blocks: [ct-phi-compliance]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 5
+
+  - id: HA-021
+    type: UNBLOCK
+    title: "Triora: chase external reviewer for notes/screens (click-through bug audit B2)"
+    detail: >
+      The reviewer who flagged the fictitious-claims issue (fixed, #103 live 2026-06-26) also
+      reported 'bugs and error messages' — that half was never captured. One message to the
+      reviewer asking for their notes/screenshots seeds the B2 click-through audit
+      (docs/WEBSITE_FEEDBACK_REMEDIATION_2026-06-26.md); free external QA.
+    blocks: [ct-reviewer-b2-audit]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 6
+
+  - id: HA-022
+    type: DECIDE
+    title: "Triora: decide Stripe LIVE-mode timing (currently test mode, zero revenue)"
+    detail: >
+      Billing code is shipped, its 500s fixed, Group checkout repaired (#80). Stripe has been
+      in test mode since launch — the remaining gap to first Triora revenue is a founder
+      decision on activation timing (post-stabilisation Track E per STRATEGY.md). Companion
+      to HA-007 (Pillarworks Stripe LIVE).
+    blocks: [ct-first-revenue]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: resolved
+    resolution: >
+      DECIDED 2026-07-02: activate AFTER Track E stabilisation per STRATEGY.md.
+      Trigger conditions before flipping LIVE: HA-020 SSO regression complete,
+      HA-009 PR-030 sign-off closed. Companion Pillarworks cutover (HA-007) proceeds
+      independently and first.
+    age_days: 0
+
+  # --- Portfolio director session 2026-07-02 (part 2: pillarworks session; agent prep done, founder gates) ---
+
+  - id: HA-023
+    type: APPROVE
+    title: "Merge orryx-flow promotion PR #36 (develop->main: P0 authz #33 + real comms send #35)"
+    detail: >
+      https://github.com/alexmclaren/orryx-flow/pull/36 — MERGEABLE, carries all 11
+      develop-ahead commits incl. the P0 patient-self-authz fix (#33) and real SES/SNS
+      comms send (#35); the 5 main-only commits are prior promotion merges (no conflict).
+      Check CI green (gh pr checks 36 -R alexmclaren/orryx-flow), then merge. Until merged,
+      prod main lacks the P0 authz fix.
+    blocks: [flow-main-currency]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
+    status: pending
+    age_days: 0
+
+  - id: HA-024
+    type: APPROVE
+    title: "orryx-brain: merge hygiene PRs #175/#177 + approve stale D:\\orryx-brain checkout reset"
+    detail: >
+      PR #175 refreshes SESSION_STATE.md to 2026-07-02 reality; PR #177 banners
+      orchestration/SYNC_STATE.md as INACTIVE + records the FINDING-06/03 verification in
+      docs/audits/2026-05-AUDIT_REVERIFY.md. Both docs-only, agent-prepared. Also approve
+      the checkout reset: salvage FIRST the 3 genuinely local untracked items
+      (.claude/launch.json, clients/brodie-kelly-prospect/, terraform/github-oidc/main.tf),
+      then git checkout main + reset --hard origin/main (NO git clean — untracked items and
+      the nested orryx-brain-docs-wt worktree must survive). The 5 local commits are
+      probable-duplicates of squash-merged #155; scrub script confirmed byte-identical to
+      main. Note: repo has 3 open moderate Dependabot alerts (census said 0).
+    blocks: [estate-hygiene]
+    unblocks_count: 1
+    raised_by: portfolio-director-agent
     status: pending
     age_days: 0
