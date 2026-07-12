@@ -86,11 +86,20 @@ items:
       2026-06-28; INTERNAL_API_KEY = ROTATED 2026-05-13/14 (self-documented in SM).
       RESEND CLOSED 2026-07-02 (value-level verification): live key value != leaked
       re_2rkiQnxj (no rotation needed) and the stale pre-audit 'Onboarding' key was DELETED
-      at Resend via API — only the live 'Orryx' key remains. REMAINING founder actions:
-      (1) confirm/revoke Cloudflare token id 25e037fb... in the CF dashboard (AWS copy
-      orryx/shared/cloudflare-api-token changed 2026-07-01, possibly correlated);
-      (2) optional hygiene: deactivate the never-used 2025-12 Clinical_Trials IAM key
-      AKIA...AYVV (second active key on that user; zero recorded use).
+      at Resend via API — only the live 'Orryx' key remains.
+      UPDATE 2026-07-03: the AYVV key deactivation is now folded into the Wave D
+      key-retirement step (OIDC verified live 2026-07-03, CT PR #134 merged to main
+      25101dd1; static keys AKIA...CXMIJ567 + AKIA...AYVV safe to retire — see HA note
+      on Wave D / LB-002/LB-003/ESC-CEO-031/NEW-20). ALSO FOUND 2026-07-03: the
+      replacement Cloudflare token in SM orryx/shared/cloudflare-api-token is
+      MIS-SCOPED (sees zero zones on a real GET /zones/.../dns_records call against
+      orryx.dev) — founder must recreate it with Zone->DNS->Edit incl. orryx.dev and
+      update SM; this blocks SES DKIM automation (manual DKIM CNAME paste is the
+      fallback, see D:\state\ses-pillarworks-identity-2026-07-03.md).
+      REMAINING founder actions: (1) confirm/revoke Cloudflare token id 25e037fb...
+      in the CF dashboard (AWS copy orryx/shared/cloudflare-api-token changed
+      2026-07-01, possibly correlated); (2) re-scope the mis-scoped replacement token
+      (above); (3) AYVV key deactivation via the Wave D retirement step.
       Steps: D:\state\operator-action-pack-2026-07.md.
     blocks: [orryx-brain-session-123, portfolio-secret-hygiene]
     unblocks_count: 3
@@ -131,14 +140,23 @@ items:
     title: "Triora: PR-030 compliance sign-off — PHI FK migration ran without backup gate"
     detail: >
       The Wave A SET-NULL FK migration auto-ran on the live PHI database 2026-06-27 without
-      a backup-before-migrate step. AGENT PREP DONE 2026-07-02 — founder reviews+merges:
-      PR #127 (read-only FK verification script, SELECT-only, wired into run-admin-script
-      dropdown; run it post-merge to prove confdeltype='n' + sprint189_001) and PR #128
-      (backup gate: unconditional RDS snapshot before EVERY deploy, fail-closed, gates the
-      deploy job because entrypoint.sh migrates on container start; IAM grant is a separate
-      commit needing terraform apply BEFORE merge or deploys fail closed). Then sign off
-      SET-NULL retention in docs/compliance/COMPLIANCE_POSTURE.md and close PR-030.
-      Steps: D:\state\operator-action-pack-2026-07.md.
+      a backup-before-migrate step. PROD VERIFICATION EXECUTED 2026-07-02: #127 merged and
+      run against prod (workflow run 28569177096) — WAVE A CONFIRMED APPLIED: both
+      patient_profiles_site_id_fkey and match_results_site_id_fkey show confdeltype='n'
+      (SET NULL) and alembic_version = sprint189_001 (raw evidence: CloudWatch
+      /ecs/clinical-trials-api-pilot stream api/api/601d2b04...; script's compare bug
+      fixed via merged PR #130). BACKUP GATE LIVE + PROVEN 2026-07-02: #128 merged and
+      its first gated deploy created RDS snapshot pre-migrate-92382964-28577479482
+      (available) BEFORE deploying — no terraform apply was needed (deploy identity is
+      IAM user Clinical_Trials which holds PowerUserAccess; NOTE that user also has
+      IAMFullAccess = over-privileged CI credential, strengthens the LB-002 OIDC
+      cutover case). Post-deploy Production Diagnostics ALL PASS. ONLY REMAINING
+      founder step: sign off SET-NULL retention in docs/compliance/COMPLIANCE_POSTURE.md
+      and close PR-030 with the evidence above.
+      UPDATE 2026-07-03: draft sign-off PR opened with full evidence —
+      https://github.com/alexmclaren/Clinical_trials/pull/133. PR-030 Problem Record
+      lives in SESSION_STATE.md. STILL NOT RESOLVED — awaits founder signature: sign
+      the block in PR #133, mark ready + merge, close PR-030 with the evidence above.
     blocks: [ct-phi-compliance]
     unblocks_count: 1
     raised_by: portfolio-director-agent
@@ -234,17 +252,18 @@ items:
     type: JUDGE
     title: "Batch-review Pillarworks PR queue #253-#260 (8 PRs from bug-swarm/audit)"
     detail: >
-      PRE-VERIFICATION COMPLETE 2026-07-02 — full merge/hold table at
-      D:\state\pillarworks-pr-verdicts-2026-07-02.md. #253/#254/#256 merged earlier;
-      #255/#257/#258 MERGED 2026-07-02 (operator-approved batch). IN FLIGHT (agent):
-      #260 conflict-resolution rebase (post-merge overlap in ai_extraction.py) and
-      #259 rework (fix the 3 billing-test regressions from price-id drift + add
-      TIER_LIMITS["starter"]) — founder re-reviews #259 when CI is green.
-      #259 must land before Stripe LIVE (HA-007).
+      Verdict table: D:\state\pillarworks-pr-verdicts-2026-07-02.md.
     blocks: [pillarworks-swarm-fixes]
     unblocks_count: 8
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      ALL 8 DISPOSITIONED 2026-07-02: #253/#254/#256 merged (verified post-merge);
+      #255/#257/#258/#260 merged (main CI green after); #259 reworked (fail-closed
+      mapper + TIER_LIMITS starter + tests properly configured), re-reviewed
+      (verdict MERGE; follow-up: alert on unknown-price path once Sentry DSN lands)
+      and MERGED 2026-07-02 under founder authorisation. Stripe LIVE (HA-007)
+      billing precondition is now met.
     age_days: 5
 
   - id: HA-016
@@ -256,12 +275,18 @@ items:
       task-def 448, no plaintext, CI green; bundles a correct ALB health-check-path fix).
       Residual noted for follow-up: TF drift — iam.tf execution-role policy lacks
       orryx/triora/* and live task def uses triora-ecs-execution-pilot vs TF's role, so
-      full terraform apply remains unsafe. REMAINING: founder performs the OAIC compliance
-      review of #120 and merges it.
+      full terraform apply remains unsafe (targeted applies only until reconciled).
     blocks: [triora-compliance-prs]
     unblocks_count: 2
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      BOTH MERGED 2026-07-02 under founder authorisation: #119 (pre-verified) and
+      #120 (deep review verdict MERGE: additive-only migration, ADMIN gates kept, no
+      PHI in export/request_params, ap-southeast-2 residency; CI green). Deploys
+      succeeded; post-deploy Production Diagnostics ALL PASS. Follow-ups tracked:
+      wire cleanup_expired() to a schedule, enforce expires_at in get_artifact,
+      rollback-before-mark_failed, and the TF-drift reconciliation above.
     age_days: 5
 
   - id: HA-017
@@ -275,6 +300,25 @@ items:
       wants research first and wants medical/doctors included in the ICP consideration —
       research task queued). Source: orryx-brain docs/strategy/
       ORRYX_DEV_SMB_REPOSITIONING_PLAN.md Sec.10.
+      NOW CONCRETE via orryx-website PR #22 (reviewed 2026-07-02, verdict HOLD, retargeted
+      to main): it ships 4 indexed industry pages (accounting/legal/agencies/property-strata),
+      DELETES the healthcare mention, and entrenches Assessment-as-entry copy — i.e. it
+      pre-answers R4 and soft-answers R1. Pricing verified CLEAN (R2 upheld, offer.price=null).
+      CRITICAL CLAIMS FINDING (verified 2026-07-02): the PR's copy asserts "every example is
+      a real system we built and can demonstrate live" — but all 3 proof-set demos
+      (Onboarding Autopilot / Inbox Triage / Document Intake) are PLANNED-ONLY: no repo, no
+      Worker, no endpoint exists; the n8n spine they build on is switched OFF (HA-001) and
+      their product-seed target repos were archived today as stubs. Shipping as-is =
+      fabricated-claims class (the HA-005-era failure mode, in honesty-ribbon clothing).
+      FOUNDER DIRECTIVE 2026-07-03: PR #22 is the founder's SEPARATE website workstream —
+      agents HANDS-OFF (no pushes, no merge, no rewording) until the founder says otherwise.
+      Findings retained for their reference: (1) the "real system we can demonstrate live"
+      copy is false today (demos planned-only); (2) 3 ungated motion blocks (About/
+      Assessment/FaqPage — use the PR's own FadeIn); (3) text-clay-400/500 contrast
+      failures; (4) 4-ICP set pre-answers R4 + healthcare mention deleted; (5) bundled
+      Home-v2 rebuild undocumented in PR body; (6) confirm ACN 696 212 889. Base was
+      retargeted to main 2026-07-02 (mechanical; old base branch was merged). Note:
+      Phase 0 (#21) already merged + deployed 2026-07-02.
     blocks: [repositioning-phase-2]
     unblocks_count: 1
     raised_by: portfolio-director-agent
@@ -330,9 +374,11 @@ items:
       mismatch locks hospital SSO users out. CONSOLIDATED CHECKLIST ready:
       D:\state\ha-020-sso-regression-checklist-2026-07.md (fill [OPERATOR] gaps first).
       CODE-CHECK 2026-07-02: enforcement verdict PARTIAL — HTTP+refresh paths genuinely
-      enforced fail-closed; WebSocket + optional-auth bypasses found, held fix open as
-      PR #129 [REQUIRES HUMAN REVIEW] (founder merges). Needs operator IdP credentials;
-      agent can drive the checklist.
+      enforced fail-closed; WebSocket + optional-auth bypasses found, fixed in PR #129
+      — MERGED 2026-07-02 (founder-authorised batch, CI green, deployed). NOTE: #129 is
+      agent-authored auth code — spot-check src/websocket/routes.py during the IdP
+      regression. Remaining = the live-IdP regression itself. Needs operator IdP
+      credentials; agent can drive the checklist.
     blocks: [ct-phi-compliance]
     unblocks_count: 1
     raised_by: portfolio-director-agent
@@ -378,25 +424,22 @@ items:
     type: APPROVE
     title: "Merge orryx-flow promotion PR #36 (develop->main: P0 authz #33 + real comms send #35)"
     detail: >
-      https://github.com/alexmclaren/orryx-flow/pull/36 — MERGEABLE, carries all 11
-      develop-ahead commits incl. the P0 patient-self-authz fix (#33) and real SES/SNS
-      comms send (#35); the 5 main-only commits are prior promotion merges (no conflict).
-      Check CI green (gh pr checks 36 -R alexmclaren/orryx-flow), then merge. Until merged,
-      prod main lacks the P0 authz fix.
+      https://github.com/alexmclaren/orryx-flow/pull/36 — carried all 11 develop-ahead
+      commits incl. the P0 patient-self-authz fix (#33) and real SES/SNS comms send (#35).
     blocks: [flow-main-currency]
     unblocks_count: 1
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: "MERGED 2026-07-02 (CI green, founder-authorised batch). main now carries #33 + #35."
     age_days: 0
 
   - id: HA-024
     type: APPROVE
     title: "orryx-brain: merge hygiene PRs #175/#177 + approve stale D:\\orryx-brain checkout reset"
     detail: >
-      PR #175 refreshes SESSION_STATE.md to 2026-07-02 reality; PR #177 banners
-      orchestration/SYNC_STATE.md as INACTIVE + records the FINDING-06/03 verification in
-      docs/audits/2026-05-AUDIT_REVERIFY.md. Both docs-only, agent-prepared. Also approve
-      the checkout reset: salvage FIRST the 3 genuinely local untracked items
+      PRs #175 + #177 MERGED 2026-07-02 (SESSION_STATE refreshed; SYNC_STATE bannered
+      INACTIVE; FINDING-06/03 verification recorded in docs/audits/2026-05-AUDIT_REVERIFY.md).
+      REMAINING: approve the checkout reset: salvage FIRST the 3 genuinely local untracked items
       (.claude/launch.json, clients/brodie-kelly-prospect/, terraform/github-oidc/main.tf),
       then git checkout main + reset --hard origin/main (NO git clean — untracked items and
       the nested orryx-brain-docs-wt worktree must survive). The 5 local commits are
@@ -405,5 +448,11 @@ items:
     blocks: [estate-hygiene]
     unblocks_count: 1
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      EXECUTED 2026-07-03: D:\orryx-brain checkout reset to origin/main (checkout had
+      0 local commits, was 3 behind — no salvage-vs-duplicate question remained).
+      Salvage of the 3 untracked items preserved at
+      D:\state\salvage-orryx-brain-2026-07-03 before reset. PRs #175/#177 confirmed
+      already merged 2026-07-02.
     age_days: 0
