@@ -1,0 +1,133 @@
+# Reconcile proposals — plan → ledger (PROPOSAL ONLY, human ratifies)
+# Generated: 2026-07-13 from master-operating-plan-2026-07-13.md vs queue.yaml
+# Rule: decided items persist as resolved ONLY — never re-opened.
+# To apply: review each item, then copy accepted ones into queue.yaml
+# yourself (this script never writes the ledger).
+plan_file: "master-operating-plan-2026-07-13.md"
+plan_date: "2026-07-13"
+generated: "2026-07-13"
+proposals:
+  - id: ESC-002
+    proposed_status: resolved
+    decision_ref: "DEC-H3"
+    decision_title: "MCP track (orryx-core, orryx-engineering, orryx-mcp-gateway): REVIVE vs RETIRE"
+    plan_context: "- **Resolved/closed this run:** ESC-002, ESC-004, **ESC-007 (ADR-117 stubs gone — disk-verified, re-flag caveat RETIRED)**, ESC-008, ESC-012."
+  - id: ESC-004
+    proposed_status: resolved
+    decision_ref: "DEC-H3"
+    decision_title: "MCP track (orryx-core, orryx-engineering, orryx-mcp-gateway): REVIVE vs RETIRE"
+    plan_context: "- **Resolved/closed this run:** ESC-002, ESC-004, **ESC-007 (ADR-117 stubs gone — disk-verified, re-flag caveat RETIRED)**, ESC-008, ESC-012."
+  - id: ESC-007
+    proposed_status: resolved
+    decision_ref: "DEC-H3"
+    decision_title: "MCP track (orryx-core, orryx-engineering, orryx-mcp-gateway): REVIVE vs RETIRE"
+    plan_context: "| Δ3 | **★★ ESC-007 (ADR-117 stubs) TRULY RESOLVED — disk re-verified.** | ▲ | `repos/orryx-*` stub dirs GONE from `orryx-brain`; CLAUDE.md §18 now matches reality. The standing 're-flag doc/reality d"
+  - id: ESC-009
+    proposed_status: resolved
+    decision_ref: "DEC-H3"
+    decision_title: "MCP track (orryx-core, orryx-engineering, orryx-mcp-gateway): REVIVE vs RETIRE"
+    plan_context: "| Δ4 | **★ ESC-009 narrowed to pillarworks-only.** | ▲ | `repos/orryx-mcp-gateway` gitlink now EQUALS standalone HEAD (`b6f53e5`) — converged. Only pillarworks gitlink drifts (`9efaf7a`, 12 behind sta"
+  - id: NEW-22
+    proposed_status: resolved
+    decision_ref: "DEC-ESC-CEO-027"
+    decision_title: "Clinical Trials git-history rewrite formally DROPPED (accepted-risk)"
+    plan_context: "| Δ6 | **★ Security baseline FRESH again (was ABORT 07-12).** | ▲ posture / ▼ clock | NEW-22 staleness counter re-activated: production PHI-DB master credential unrotated **~4.7mo (146+d) in git histo"
+  - id: DO-03
+    proposed_status: pending
+    plan_context: "5. **ORC-33 · 🟠 CT standalone rollback broken ~161d — owner: human/devops (NEW this run as its own stream).** `rollback-ecs.yml` last ran 2026-01-31 (FAILED ×2), OIDC-configured via #134 but never re"
+  - id: DO-36
+    proposed_status: pending
+    plan_context: "| Apply PR #145 (CT read-only IAM `cloudwatch:GetMetricStatistics`) — IAM write | Operator | product PR-05 / devops DO-36 |"
+  - id: ESC-001
+    proposed_status: pending
+    plan_context: "- **Carried:** ESC-003 (flow bleeding-edge), ESC-005 (Auth0), ESC-010 (gh token scope), ESC-011 (Cloudflare — security-owned), ESC-013 (next-16 skew, CVE-clean), ESC-001 (brain dependabot residual, cl"
+  - id: ESC-003
+    proposed_status: pending
+    plan_context: "| orryx-flow / standards / knowledge / engineering / control-plane / governance | 🟢 OK ×7 | Working trees cleaned. Flow FE bleeding-edge (ESC-003/DEP-03) carried. governance nested-in-brain = ESC-014"
+  - id: ESC-005
+    proposed_status: pending
+    plan_context: "| Auth convergence decision (Auth0 only Directors Portal) `[ESC-005/DEP-05]` | dependency-analysis |"
+  - id: ESC-006
+    proposed_status: pending
+    plan_context: "- **SEQ-1 (Stripe):** Verify LIVE Stripe keys work on the pinned `stripe==7.11.0` (pillarworks frozen) BEFORE relying on #285 activation. `[DEP-06/ESC-006 widened]`"
+  - id: ESC-008
+    proposed_status: pending
+    plan_context: "- **Resolved/closed this run:** ESC-002, ESC-004, **ESC-007 (ADR-117 stubs gone — disk-verified, re-flag caveat RETIRED)**, ESC-008, ESC-012."
+  - id: ESC-010
+    proposed_status: pending
+    plan_context: "- **Carried:** ESC-003 (flow bleeding-edge), ESC-005 (Auth0), ESC-010 (gh token scope), ESC-011 (Cloudflare — security-owned), ESC-013 (next-16 skew, CVE-clean), ESC-001 (brain dependabot residual, cl"
+  - id: ESC-011
+    proposed_status: pending
+    plan_context: "10. **ORC-04 · 🟡 scrub-only dead literals + cloud-rotation residual — owner: human.** Scrub brain NEW-04/08 literal; cloud-rotate Temporal (NEW-13) + Cloudflare (ESC-011) — both HEAD-clean, code land"
+  - id: ESC-012
+    proposed_status: pending
+    plan_context: "- **Resolved/closed this run:** ESC-002, ESC-004, **ESC-007 (ADR-117 stubs gone — disk-verified, re-flag caveat RETIRED)**, ESC-008, ESC-012."
+  - id: ESC-013
+    proposed_status: pending
+    plan_context: "- **Carried:** ESC-003 (flow bleeding-edge), ESC-005 (Auth0), ESC-010 (gh token scope), ESC-011 (Cloudflare — security-owned), ESC-013 (next-16 skew, CVE-clean), ESC-001 (brain dependabot residual, cl"
+  - id: ESC-014
+    proposed_status: pending
+    plan_context: "| Δ5 | **★ ESC-014 NEW — nested divergent checkout.** | ▼ new | `orryx-brain/orryx-governance` (`@orryx/orryx-governance@1.0.0-sprint1`, on main, absent from `.gitmodules`, ~146d in tree). The old `or"
+  - id: NEW-04
+    proposed_status: pending
+    plan_context: "10. **ORC-04 · 🟡 scrub-only dead literals + cloud-rotation residual — owner: human.** Scrub brain NEW-04/08 literal; cloud-rotate Temporal (NEW-13) + Cloudflare (ESC-011) — both HEAD-clean, code land"
+  - id: NEW-09
+    proposed_status: pending
+    plan_context: "1. **ORC-01 · 🔴 CT credential incident — ONE stream, owner: human.** NEW-22 (prod PHI-DB master pw, top) + NEW-23 (AACT) + NEW-09 (Pinecone/OpenAI/Google-OAuth). Reported by security (0d, authoritati"
+  - id: NEW-12
+    proposed_status: pending
+    plan_context: "2. **ORC-30 · 🔴 NEW-12 n8n JWT — owner: human.** Only HEAD-live critical; plaintext in pillarworks `main:docs/archive/.../PHASE_10_REVISED_PLAN.md:331`. Redact + rotate + history-scrub."
+  - id: NEW-13
+    proposed_status: pending
+    plan_context: "10. **ORC-04 · 🟡 scrub-only dead literals + cloud-rotation residual — owner: human.** Scrub brain NEW-04/08 literal; cloud-rotate Temporal (NEW-13) + Cloudflare (ESC-011) — both HEAD-clean, code land"
+  - id: NEW-15
+    proposed_status: pending
+    plan_context: "9. **ORC-23 · 🟡 MC full-tree gitleaks gate lone hold-out — owner: human.** Merge gate branch `ci/secret-scan-fulltree-2026-06-18` (4 ahead of `master`, merge-ready) — dual-closes the gate AND scrubs "
+  - id: NEW-23
+    proposed_status: pending
+    plan_context: "1. **ORC-01 · 🔴 CT credential incident — ONE stream, owner: human.** NEW-22 (prod PHI-DB master pw, top) + NEW-23 (AACT) + NEW-09 (Pinecone/OpenAI/Google-OAuth). Reported by security (0d, authoritati"
+  - id: NEW-88
+    proposed_status: pending
+    plan_context: "6. **ORC-16 · 🟠 CT PHI human-review queue — owner: human.** NEW-88 (IDOR on PHI authz path — verify boundary before treating closed) + NEW-94 (backup-before-migrate gate code-complete #128, owes comp"
+  - id: NEW-89
+    proposed_status: pending
+    plan_context: "6. **ORC-16 · 🟠 CT PHI human-review queue — owner: human.** NEW-88 (IDOR on PHI authz path — verify boundary before treating closed) + NEW-94 (backup-before-migrate gate code-complete #128, owes comp"
+  - id: NEW-94
+    proposed_status: pending
+    plan_context: "6. **ORC-16 · 🟠 CT PHI human-review queue — owner: human.** NEW-88 (IDOR on PHI authz path — verify boundary before treating closed) + NEW-94 (backup-before-migrate gate code-complete #128, owes comp"
+  - id: NEW-95
+    proposed_status: pending
+    plan_context: "| Deactivate→delete idle CT IAM key `AKIA…AYVV` (do NOT touch live `…CXMIJ567`); tidy NEW-95 root runbook | Operator | security-13 P1 |"
+  - id: ORC-01
+    proposed_status: pending
+    plan_context: "**Net trajectory: materially IMPROVED.** The blackout (last run's keystone) cleared, two long-standing structural traps (ADR-117 stubs, nested brain checkout) resolved, one submodule drift converged, "
+  - id: ORC-04
+    proposed_status: pending
+    plan_context: "10. **ORC-04 · 🟡 scrub-only dead literals + cloud-rotation residual — owner: human.** Scrub brain NEW-04/08 literal; cloud-rotate Temporal (NEW-13) + Cloudflare (ESC-011) — both HEAD-clean, code land"
+  - id: ORC-08
+    proposed_status: pending
+    plan_context: "7. **ORC-08 · 🟡 pillarworks CI/FE-TS residual + ENG-07 merge — owner: human.** ENG-17 (~195 masked FE TS errors, DP-11, human-planned batch) + ENG-07 (mcp-gw unit tests, lone true-merge; pre-merge cl"
+  - id: ORC-12
+    proposed_status: pending
+    plan_context: "| Δ4 | **★ ESC-009 narrowed to pillarworks-only.** | ▲ | `repos/orryx-mcp-gateway` gitlink now EQUALS standalone HEAD (`b6f53e5`) — converged. Only pillarworks gitlink drifts (`9efaf7a`, 12 behind sta"
+  - id: ORC-16
+    proposed_status: pending
+    plan_context: "6. **ORC-16 · 🟠 CT PHI human-review queue — owner: human.** NEW-88 (IDOR on PHI authz path — verify boundary before treating closed) + NEW-94 (backup-before-migrate gate code-complete #128, owes comp"
+  - id: ORC-19
+    proposed_status: pending
+    plan_context: "| Δ9 | CT `Automation Health Check` red streak | ▬ | ~8d (07-05→12); still mechanical-CRIT / prod-path GREEN (probe false-alarm). Fix = PR #145 (IAM `cloudwatch:GetMetricStatistics`), open+un-applied."
+  - id: ORC-23
+    proposed_status: pending
+    plan_context: "9. **ORC-23 · 🟡 MC full-tree gitleaks gate lone hold-out — owner: human.** Merge gate branch `ci/secret-scan-fulltree-2026-06-18` (4 ahead of `master`, merge-ready) — dual-closes the gate AND scrubs "
+  - id: ORC-30
+    proposed_status: pending
+    plan_context: "2. **ORC-30 · 🔴 NEW-12 n8n JWT — owner: human.** Only HEAD-live critical; plaintext in pillarworks `main:docs/archive/.../PHASE_10_REVISED_PLAN.md:331`. Redact + rotate + history-scrub."
+  - id: ORC-31
+    proposed_status: pending
+    plan_context: "| Δ1 | **★★ Producer-scheduler BLACKOUT is OVER — ORC-31 RESOLVES.** | ▲ major | The 07-08→11 dark stretch + 07-12 mass-SKIP has cleared. Today: security 07-13 (0d), dependency-analysis 07-13 (0d), pr"
+  - id: ORC-32
+    proposed_status: pending
+    plan_context: "| Δ2 | **★★ pillarworks Stripe LIVE PR #285 MERGED** (was OPEN 07-12). | ▲ | ORC-32 shifts open→**merged-but-activation-gated**. Revenue gate moves from *build/merge* → *safe activation* (LIVE key mus"
+  - id: ORC-33
+    proposed_status: pending
+    plan_context: "5. **ORC-33 · 🟠 CT standalone rollback broken ~161d — owner: human/devops (NEW this run as its own stream).** `rollback-ecs.yml` last ran 2026-01-31 (FAILED ×2), OIDC-configured via #134 but never re"
