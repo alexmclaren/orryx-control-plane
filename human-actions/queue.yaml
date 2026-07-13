@@ -3,7 +3,7 @@
 # type: APPROVE | DECIDE | JUDGE | UNBLOCK
 # column mapping: DECIDE/APPROVE -> DECIDE TODAY ; JUDGE -> NEEDS JUDGEMENT ; UNBLOCK -> DO NOW
 version: "1.0"
-last_updated: "2026-07-02"
+last_updated: "2026-07-13"
 
 items:
   - id: HA-001
@@ -455,4 +455,20 @@ items:
       Salvage of the 3 untracked items preserved at
       D:\state\salvage-orryx-brain-2026-07-03 before reset. PRs #175/#177 confirmed
       already merged 2026-07-02.
+    age_days: 0
+
+  - id: HA-025
+    type: UNBLOCK
+    title: "Premium-website submodule: local git-hygiene remediation required before any push"
+    detail: >
+      Sensitive local-only hygiene item found 2026-07-12 during the fleet commit/push
+      sweep. Details deliberately NOT recorded here (this repo is pushed to a remote).
+      Full finding + step-by-step fix: D:\state\ha-025-premium-website-hygiene-2026-07-12.md.
+      Rule: do NOT push the affected submodule until that runbook's verification step
+      passes. Also covers founder review of uncommitted working-tree changes in the
+      same submodule family.
+    blocks: [orryx-premium-website-push]
+    unblocks_count: 1
+    raised_by: fleet-hygiene-session-2026-07-12
+    status: open
     age_days: 0
