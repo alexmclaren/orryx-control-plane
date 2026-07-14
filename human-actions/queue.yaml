@@ -3,7 +3,7 @@
 # type: APPROVE | DECIDE | JUDGE | UNBLOCK
 # column mapping: DECIDE/APPROVE -> DECIDE TODAY ; JUDGE -> NEEDS JUDGEMENT ; UNBLOCK -> DO NOW
 version: "1.0"
-last_updated: "2026-07-13"
+last_updated: "2026-07-14"
 
 items:
   - id: HA-001
@@ -471,4 +471,366 @@ items:
     unblocks_count: 1
     raised_by: fleet-hygiene-session-2026-07-12
     status: open
+    age_days: 0
+
+  # --- Reconciler ratification 2026-07-14 (plan→ledger sync; source: reconcile-proposals-2026-07-14.yaml) ---
+
+  # GROUP A: Already decided in governance-decisions.json — persisted as RESOLVED (never re-opened)
+
+  - id: ESC-002
+    type: UNBLOCK
+    title: "@anthropic-ai/sdk skew (0.24→0.91) folded into DEC-H3 gateway-revival sprint"
+    detail: "Remediated inside the gateway-revival sprint per DEC-H3 scope item 4."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: resolved
+    resolution: "Decided via DEC-H3 / DEC-ESC-CEO-005 (governance-decisions.json). Executes with gateway-revival sprint."
+    age_days: 0
+
+  - id: ESC-004
+    type: UNBLOCK
+    title: "MCP gateway registered Pillarworks as first subsidiary"
+    detail: "Closes the 'no consumers' escalation via DEC-H3 REVIVE decision."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: resolved
+    resolution: "Decided via DEC-H3 (governance-decisions.json). Gateway-as-PEP shape, Pillarworks = first subsidiary."
+    age_days: 0
+
+  - id: ESC-007
+    type: UNBLOCK
+    title: "ADR-117 stubs removed (disk-verified 2026-07-13)"
+    detail: "repos/orryx-* stub dirs GONE from orryx-brain; CLAUDE.md §18 now matches reality."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: resolved
+    resolution: "Disk-verified 2026-07-13. DEC-H3 scope item 2 (canonical @orryx/core 1.1.0) closes the collision direction."
+    age_days: 0
+
+  - id: ESC-009
+    type: UNBLOCK
+    title: "Submodule drift converged (pillarworks-only residual)"
+    detail: "repos/orryx-mcp-gateway gitlink now equals standalone HEAD (b6f53e5). Only pillarworks gitlink drifts."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: resolved
+    resolution: "Converged 2026-07-13 per DEC-H3 sequencing. Pillarworks-only residual tracked separately."
+    age_days: 0
+
+  - id: NEW-22
+    type: UNBLOCK
+    title: "CT git-history rewrite formally DROPPED (accepted-risk)"
+    detail: "Clinical Trials history rewrite dropped per DEC-ESC-CEO-027. D:\\backups deletion gated on ctadmin rotation verification."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: resolved
+    resolution: "Decided via DEC-ESC-CEO-027 (governance-decisions.json 2026-07-03). Same posture as orryx-brain no-rewrite precedent."
+    age_days: 0
+
+  # GROUP B: Open plan actions — persisted as PENDING
+
+  - id: ORC-01
+    type: UNBLOCK
+    title: "CT credential incident stream (NEW-22 + NEW-23 + NEW-09)"
+    detail: "Production PHI-DB master pw (top), AACT, Pinecone/OpenAI/Google-OAuth. Security-reported, 0d authoritative."
+    blocks: [ct-security-posture]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-30
+    type: UNBLOCK
+    title: "NEW-12 n8n JWT — HEAD-live critical"
+    detail: "Plaintext in pillarworks main:docs/archive/.../PHASE_10_REVISED_PLAN.md:331. Redact + rotate + history-scrub."
+    blocks: [pillarworks-security]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-33
+    type: UNBLOCK
+    title: "CT standalone rollback broken ~161d"
+    detail: "rollback-ecs.yml last ran 2026-01-31 (FAILED x2). OIDC-configured via #134 but never re-tested."
+    blocks: [ct-ops-resilience]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-34
+    type: UNBLOCK
+    title: "Fleet-scheduler cadence degradation"
+    detail: "Early-window ordering race + fleet-health false-dark alarm + memory-consolidation non-run. ESC-CEO-034 / ESC-PROC-001 / FH-30/31/32."
+    blocks: [fleet-consistency]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-16
+    type: JUDGE
+    title: "CT PHI human-review queue (NEW-88 + NEW-94 + NEW-89)"
+    detail: "IDOR on PHI authz path, backup-before-migrate gate code-complete, related items."
+    blocks: [ct-phi-compliance]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-31
+    type: UNBLOCK
+    title: "Producer-scheduler blackout cleared"
+    detail: "07-08→11 dark stretch + 07-12 mass-SKIP cleared. Security/dependency-analysis/production-health all fresh."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-32
+    type: UNBLOCK
+    title: "Pillarworks Stripe LIVE PR #285 merged — activation-gated"
+    detail: "Revenue gate moves from build/merge to safe activation (LIVE key must work on pinned stripe==7.11.0)."
+    blocks: [pillarworks-first-revenue]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-12
+    type: UNBLOCK
+    title: "ESC-009 pillarworks gitlink drift residual"
+    detail: "pillarworks gitlink 9efaf7a, 12 behind standalone HEAD. Submodule update owes."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-014
+    type: UNBLOCK
+    title: "Nested divergent checkout — orryx-governance in orryx-brain"
+    detail: "orryx-brain/orryx-governance (@orryx/orryx-governance@1.0.0-sprint1, on main, absent from .gitmodules, ~146d in tree)."
+    blocks: [estate-hygiene]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-19
+    type: UNBLOCK
+    title: "CT Automation Health Check red streak"
+    detail: "~8d (07-05→12); mechanical-CRIT / prod-path GREEN. Fix = PR #145 (IAM cloudwatch:GetMetricStatistics), open+un-applied."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-23
+    type: UNBLOCK
+    title: "CT AACT credential in history"
+    detail: "Part of ORC-01 credential incident stream."
+    blocks: [ct-security-posture]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-09
+    type: UNBLOCK
+    title: "CT Pinecone/OpenAI/Google-OAuth credentials in history"
+    detail: "Part of ORC-01 credential incident stream."
+    blocks: [ct-security-posture]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-12
+    type: UNBLOCK
+    title: "n8n JWT plaintext in pillarworks archive"
+    detail: "Tracked via ORC-30. HEAD-live critical."
+    blocks: [pillarworks-security]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-88
+    type: JUDGE
+    title: "CT IDOR on PHI authz path — verify boundary before treating closed"
+    detail: "Part of ORC-16 PHI human-review queue."
+    blocks: [ct-phi-compliance]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-94
+    type: UNBLOCK
+    title: "CT backup-before-migrate gate code-complete (#128)"
+    detail: "Owes completion per ORC-16."
+    blocks: [ct-phi-compliance]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-89
+    type: UNBLOCK
+    title: "CT PHI-related item in ORC-16 queue"
+    detail: "Part of ORC-16 PHI human-review queue."
+    blocks: [ct-phi-compliance]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-04
+    type: UNBLOCK
+    title: "Scrub-only dead literals + cloud-rotation residual"
+    detail: "Scrub brain NEW-04/08 literal; cloud-rotate Temporal (NEW-13) + Cloudflare (ESC-011) — both HEAD-clean."
+    blocks: [security-hygiene]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-08
+    type: UNBLOCK
+    title: "Pillarworks CI/FE-TS residual + ENG-07 merge"
+    detail: "ENG-17 (~195 masked FE TS errors), ENG-07 (mcp-gw unit tests, lone true-merge)."
+    blocks: [pillarworks-ci]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ORC-23
+    type: UNBLOCK
+    title: "MC full-tree gitleaks gate lone hold-out"
+    detail: "Merge gate branch ci/secret-scan-fulltree-2026-06-18 (4 ahead of master, merge-ready)."
+    blocks: [mission-control-security]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-04
+    type: UNBLOCK
+    title: "Brain dead literal to scrub"
+    detail: "Part of ORC-04 scrub stream."
+    blocks: [security-hygiene]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-13
+    type: UNBLOCK
+    title: "Temporal cloud-rotation residual"
+    detail: "HEAD-clean, code landed. Part of ORC-04."
+    blocks: [security-hygiene]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-15
+    type: UNBLOCK
+    title: "MC gitleaks item in ORC-23 stream"
+    detail: "Part of ORC-23 merge-ready gate branch."
+    blocks: [mission-control-security]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: NEW-95
+    type: UNBLOCK
+    title: "Deactivate idle CT IAM key AKIA...AYVV"
+    detail: "Do NOT touch live ...CXMIJ567; tidy root runbook."
+    blocks: [ct-security-posture]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-003
+    type: UNBLOCK
+    title: "orryx-flow bleeding-edge FE dependency"
+    detail: "Carried — flow FE on bleeding-edge versions."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-005
+    type: DECIDE
+    title: "Auth convergence decision — Auth0 only Directors Portal"
+    detail: "Carried from dependency-analysis."
+    blocks: [auth-convergence]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-006
+    type: UNBLOCK
+    title: "Verify LIVE Stripe keys work on pinned stripe==7.11.0"
+    detail: "SEQ-1 before relying on #285 activation."
+    blocks: [pillarworks-first-revenue]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-008
+    type: UNBLOCK
+    title: "Escalation resolved this run"
+    detail: "Marked resolved in plan 2026-07-13 alongside ESC-002/004/007/012."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-010
+    type: UNBLOCK
+    title: "GH token scope escalation"
+    detail: "Carried."
+    blocks: [security-hygiene]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-011
+    type: UNBLOCK
+    title: "Cloudflare rotation — security-owned"
+    detail: "Part of ORC-04 cloud-rotation residual."
+    blocks: [security-hygiene]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-012
+    type: UNBLOCK
+    title: "Escalation resolved this run"
+    detail: "Marked resolved in plan 2026-07-13 alongside ESC-002/004/007/008."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-013
+    type: UNBLOCK
+    title: "next-16 skew, CVE-clean"
+    detail: "Carried."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: ESC-001
+    type: UNBLOCK
+    title: "Brain dependabot residual, close to merge"
+    detail: "Carried."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: DO-03
+    type: UNBLOCK
+    title: "CT standalone rollback dependency"
+    detail: "Related to ORC-33."
+    blocks: [ct-ops-resilience]
+    raised_by: reconciler-2026-07-14
+    status: pending
+    age_days: 0
+
+  - id: DO-36
+    type: UNBLOCK
+    title: "Apply PR #145 (CT read-only IAM cloudwatch:GetMetricStatistics)"
+    detail: "IAM write action for operator."
+    blocks: []
+    raised_by: reconciler-2026-07-14
+    status: pending
     age_days: 0

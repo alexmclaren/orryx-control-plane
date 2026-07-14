@@ -1,0 +1,12 @@
+# Reconcile proposals — plan → ledger (PROPOSAL ONLY, human ratifies)
+# Generated: 2026-07-14 from master-operating-plan-2026-07-14.md vs queue.yaml
+# Rule: decided items persist as resolved ONLY — never re-opened.
+# To apply: review each item, then copy accepted ones into queue.yaml
+# yourself (this script never writes the ledger).
+plan_file: "master-operating-plan-2026-07-14.md"
+plan_date: "2026-07-14"
+generated: "2026-07-14"
+proposals:
+  - id: ORC-34
+    proposed_status: pending
+    plan_context: "| Δ1 | **★★ Fleet-health FH-30/31/32 'morning stall' is a WRITE-ORDER FALSE ALARM — corrected.** | ↔ (posture ▲) | fleet-health's 01:06Z snapshot flagged security/qa/repo-scanner/etc 'dark'; direct-di"
