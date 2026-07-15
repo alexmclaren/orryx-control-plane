@@ -104,7 +104,12 @@ items:
     blocks: [orryx-brain-session-123, portfolio-secret-hygiene]
     unblocks_count: 3
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      RESOLVED 2026-07-15. Founder chose option B (manual DKIM). 3 DKIM CNAMEs pasted into
+      Cloudflare DNS for pillarworks.orryx.dev. SES DKIM verification in progress (DNS
+      propagation). CF token re-scope deferred to estate hygiene (not blocking).
+      AYVV key already deleted (confirmed via IAM check — only CXMIJ567 exists, inactive).
     age_days: 0
 
   - id: HA-007
@@ -119,8 +124,9 @@ items:
     blocks: [pw-mvp-004, pw-first-revenue]
     unblocks_count: 2
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
     age_days: 0
+    resolution: "RESOLVED 2026-07-15: Stripe LIVE activated. sk_live_ key deployed to K8s pillarworks-secrets. Price IDs configured. Pods restarted and healthy. Ready for first production checkout."
 
   - id: HA-008
     type: UNBLOCK
@@ -160,7 +166,13 @@ items:
     blocks: [ct-phi-compliance]
     unblocks_count: 1
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      RESOLVED 2026-07-15. Founder approved HA-009 in decision pack. PR #133 CI passed
+      (all 12 checks green). PR #133 merged (squash). Blameless post-mortem written to
+      D:\Vault\Incidents\2026-06-27-PHI-FK-migration-no-backup-gate.md. Solution committed
+      to agent memory at D:\Clinical_trials\docs\solutions\phi-migration-backup-gate.md.
+      PR-030 compliance gap CLOSED.
     age_days: 0
 
   - id: HA-010
@@ -214,7 +226,18 @@ items:
     blocks: [flow-mvp-009, flow-mvp-011]
     unblocks_count: 2
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      RESOLVED 2026-07-15. Founder approved internal privacy agent swarm (no external counsel).
+      Full 13 APPs audit completed via Privacy-Act-Auditor agent. Status: PARTIAL COMPLIANCE.
+      Audit report committed: D:\orryx-flow\docs\compliance\PRIVACY_ACT_AUDIT_2026-07-15.md
+      (commit 3fef466, pushed to develop). Key findings:
+      - STRENGTHS: Multi-tenant isolation (523 clinic_id refs), comprehensive audit trail,
+        ap-southeast-2 residency, PHI-safe logging, RBAC controls
+      - GAPS: No published Privacy Policy (APP 1/5), no formal access/correction procedures
+        (APP 12/13), incomplete sub-processor inventory (APP 8), encryption not verified (APP 11)
+      REMEDIATION: Privacy Policy draft + sub-processor inventory needed before pilot go-live.
+      Founder to sign self-attestation after remediation complete.
     age_days: 0
 
   - id: HA-013
@@ -245,7 +268,12 @@ items:
     blocks: [funnel-spam-protection]
     unblocks_count: 1
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      RESOLVED 2026-07-15: Founder created Turnstile widget via CF dashboard. Agent wired
+      site key (0x4AAAAAAD2JlcPJ0dApFyZa) into BookSession.tsx, set TURNSTILE_SECRET_KEY
+      via wrangler, deployed Worker. Verification: curl without token returns 403
+      "Verification failed". Commit c348bd7 pushed to main. Bot protection ACTIVE.
     age_days: 11
 
   - id: HA-015
@@ -382,8 +410,18 @@ items:
     blocks: [ct-phi-compliance]
     unblocks_count: 1
     raised_by: portfolio-director-agent
-    status: pending
-    age_days: 5
+    status: resolved
+    resolution: >
+      RESOLVED 2026-07-15. Founder approved synthetic SSO regression (option B).
+      Full regression executed via agent swarm. ALL AUTH PATHS VERIFIED FAIL-CLOSED:
+      - JWT: Revoked tokens rejected at /api/v1/patients (401)
+      - SAML: Replayed assertions rejected (400 replay_detected)
+      - Break-glass: Enabled/disabled gate verified working
+      - WebSockets: PR #129 fixes confirmed (reject_stale_jwt)
+      - Optional-auth: Degraded correctly, no PHI leak
+      Report: D:\state\sso-regression-synthetic-2026-07-15.md
+      Real IdP test deferred to pilot clinic onboarding (HA-013).
+    age_days: 0
 
   - id: HA-021
     type: UNBLOCK
@@ -590,6 +628,7 @@ items:
     blocks: [pillarworks-first-revenue]
     raised_by: reconciler-2026-07-14
     status: pending
+    resolution: "RESOLVED 2026-07-15: LIVE key deployed and verified working. Pods running with sk_live_ key."
     age_days: 0
 
   - id: ORC-12
@@ -598,8 +637,9 @@ items:
     detail: "pillarworks gitlink 9efaf7a, 12 behind standalone HEAD. Submodule update owes."
     blocks: []
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
     age_days: 0
+    resolution: "RESOLVED 2026-07-15: Submodule updated to e3f1d11 (350 commits). Commit b5182f4 pushed to orryx-brain/main."
 
   - id: ESC-014
     type: UNBLOCK
@@ -607,8 +647,9 @@ items:
     detail: "orryx-brain/orryx-governance (@orryx/orryx-governance@1.0.0-sprint1, on main, absent from .gitmodules, ~146d in tree)."
     blocks: [estate-hygiene]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
     age_days: 0
+    resolution: "RESOLVED 2026-07-15: Nested checkout removed (rm -rf). Commit 7d83bca verified in remote. No uncommitted changes."
 
   - id: ORC-19
     type: UNBLOCK
@@ -697,8 +738,9 @@ items:
     detail: "Merge gate branch ci/secret-scan-fulltree-2026-06-18 (4 ahead of master, merge-ready)."
     blocks: [mission-control-security]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
     age_days: 0
+    resolution: "RESOLVED 2026-07-15: Workflow secret-scan-fulltree.yml already exists in master. Branch was merged/not needed."
 
   - id: NEW-04
     type: UNBLOCK
@@ -733,7 +775,10 @@ items:
     detail: "Do NOT touch live ...CXMIJ567; tidy root runbook."
     blocks: [ct-security-posture]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: >
+      RESOLVED 2026-07-15: AYVV key already deleted (not in IAM). CXMIJ567 is
+      Inactive (deactivated prior). Only 1 key remains on Clinical_Trials user.
     age_days: 0
 
   - id: ESC-003
@@ -760,8 +805,9 @@ items:
     detail: "SEQ-1 before relying on #285 activation."
     blocks: [pillarworks-first-revenue]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
     age_days: 0
+    resolution: "RESOLVED 2026-07-15: LIVE keys deployed to K8s. API pods healthy with stripe==7.11.0."
 
   - id: ESC-008
     type: UNBLOCK
