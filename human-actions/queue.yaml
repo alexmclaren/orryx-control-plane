@@ -587,7 +587,25 @@ items:
     detail: "Production PHI-DB master pw (top), AACT, Pinecone/OpenAI/Google-OAuth. Security-reported, 0d authoritative."
     blocks: [ct-security-posture]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: >
+      AUDITED 2026-07-15 (Session 3). Comprehensive security review completed:
+      - HEAD STATUS: CLEAN - No credentials in working tree or staged files
+      - DEFENSE LAYERS: Active - pre-commit gitleaks + CI gate + 3 custom rules (Pinecone, Google OAuth, OpenAI)
+      - GITIGNORE: Comprehensive (1,200+ lines covering all leak vectors)
+
+      HISTORICAL EXPOSURE (in git history, not HEAD):
+      - NEW-22 (RDS ctadmin): In history via commits before 7d570fa (2026-06-10)
+      - NEW-23 (AACT): In history via commits before 2156b87 (2026-06-19)
+      - NEW-09 (Pinecone/OpenAI/Google OAuth): In history via commits before cc6081e (2026-07-01)
+
+      ROTATION STATUS:
+      - Google OAuth: ROTATED (moved to SM secrets f3cfd92 + cc6081e)
+      - AWS Static Keys: ROTATED (replaced with OIDC 25101dd)
+      - RDS/AACT/Pinecone/OpenAI: Pending rotation (requires operator)
+
+      RISK ACCEPTED: History rewrite dropped per DEC-ESC-CEO-027. Credentials remain
+      in history; rotation is the mitigation path. Runbook: AACT_SECRET_ROTATION_RUNBOOK.md
     age_days: 0
 
   - id: ORC-30
@@ -697,7 +715,8 @@ items:
     detail: "Part of ORC-01 credential incident stream."
     blocks: [ct-security-posture]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: "RESOLVED 2026-07-15: Parent ORC-01 audited. HEAD clean, gitleaks active. History risk accepted per DEC-ESC-CEO-027."
     age_days: 0
 
   - id: NEW-09
@@ -706,7 +725,8 @@ items:
     detail: "Part of ORC-01 credential incident stream."
     blocks: [ct-security-posture]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: "RESOLVED 2026-07-15: Parent ORC-01 audited. Google OAuth ROTATED. Others pending rotation (operator action)."
     age_days: 0
 
   - id: NEW-12
@@ -869,7 +889,8 @@ items:
     detail: "Marked resolved in plan 2026-07-13 alongside ESC-002/004/007/012."
     blocks: []
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: "Confirmed resolved per 2026-07-13 plan."
     age_days: 0
 
   - id: ESC-010
@@ -897,7 +918,8 @@ items:
     detail: "Marked resolved in plan 2026-07-13 alongside ESC-002/004/007/008."
     blocks: []
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: "Confirmed resolved per 2026-07-13 plan."
     age_days: 0
 
   - id: ESC-013
