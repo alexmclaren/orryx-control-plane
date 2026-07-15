@@ -438,6 +438,16 @@ items:
     unblocks_count: 1
     raised_by: portfolio-director-agent
     status: pending
+    action_required: >
+      FOUNDER ACTION (2026-07-15): This requires external outreach. The agent cannot identify
+      the reviewer's contact method from the codebase. Suggested message draft:
+
+      "Hi [Reviewer], Thanks again for the feedback on triora.io — we've fixed the fictitious
+      claims issue (PR #103 deployed 2026-06-26). You also mentioned seeing bugs and error
+      messages during your review. Would you be able to share any screenshots or notes from
+      that part? It would help us complete our quality audit. Thanks!"
+
+      Once contact established and feedback received, agent can triage bugs into B2 audit.
     age_days: 6
 
   - id: HA-022
