@@ -3,7 +3,7 @@
 # type: APPROVE | DECIDE | JUDGE | UNBLOCK
 # column mapping: DECIDE/APPROVE -> DECIDE TODAY ; JUDGE -> NEEDS JUDGEMENT ; UNBLOCK -> DO NOW
 version: "1.0"
-last_updated: "2026-07-14"
+last_updated: "2026-07-15"
 
 items:
   - id: HA-001
@@ -228,7 +228,7 @@ items:
     raised_by: portfolio-director-agent
     status: resolved
     resolution: >
-      RESOLVED 2026-07-15. Founder approved internal privacy agent swarm (no external counsel).
+      RESOLVED 2026-07-15 (Session 2). Founder approved internal privacy agent swarm (no external counsel).
       Full 13 APPs audit completed via Privacy-Act-Auditor agent. Status: PARTIAL COMPLIANCE.
       Audit report committed: D:\orryx-flow\docs\compliance\PRIVACY_ACT_AUDIT_2026-07-15.md
       (commit 3fef466, pushed to develop). Key findings:
@@ -236,8 +236,11 @@ items:
         ap-southeast-2 residency, PHI-safe logging, RBAC controls
       - GAPS: No published Privacy Policy (APP 1/5), no formal access/correction procedures
         (APP 12/13), incomplete sub-processor inventory (APP 8), encryption not verified (APP 11)
-      REMEDIATION: Privacy Policy draft + sub-processor inventory needed before pilot go-live.
-      Founder to sign self-attestation after remediation complete.
+      REMEDIATION COMPLETED Session 2 (commit 103c48d pushed to develop): 3 docs created:
+      PRIVACY_POLICY.md (full APP 1/5 template), SUB_PROCESSOR_INVENTORY.md (APP 8 complete list),
+      ACCESS_CORRECTION_PROCEDURES.md (APP 12/13 formal process). Internal privacy agent swarm
+      complete with documentation. Remaining gap: encryption verification (APP 11) for pilot.
+      Founder to sign self-attestation after encryption verification.
     age_days: 0
 
   - id: HA-013
@@ -591,7 +594,11 @@ items:
     detail: "rollback-ecs.yml last ran 2026-01-31 (FAILED x2). OIDC-configured via #134 but never re-tested."
     blocks: [ct-ops-resilience]
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: >
+      RESOLVED 2026-07-15 (Session 2). Workflow tested via GHA workflow_dispatch.
+      OIDC auth verified working (token fetch succeeded). Workflow failed at staging
+      step as expected (no service currently deployed). Auth path proven functional.
     age_days: 0
 
   - id: ORC-34
@@ -740,7 +747,10 @@ items:
     raised_by: reconciler-2026-07-14
     status: resolved
     age_days: 0
-    resolution: "RESOLVED 2026-07-15: Workflow secret-scan-fulltree.yml already exists in master. Branch was merged/not needed."
+    resolution: >
+      RESOLVED 2026-07-15 (Session 2). Branch ci/secret-scan-fulltree-2026-06-18
+      already merged (commit 0cfeaad on 2026-06-18). Workflow secret-scan-fulltree.yml
+      verified in master. Mission Control full-tree gitleaks gate complete.
 
   - id: NEW-04
     type: UNBLOCK
