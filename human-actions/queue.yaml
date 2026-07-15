@@ -253,7 +253,11 @@ items:
     blocks: [flow-mvp-011, flow-mvp-014]
     unblocks_count: 2
     raised_by: portfolio-director-agent
-    status: pending
+    status: resolved
+    resolution: >
+      DEPRIORITIZED 2026-07-15: Founder directive — no reliance on external parties during
+      development. Pilot clinic identification deferred until product is fully ready for
+      external deployment. Internal dogfooding and synthetic testing to validate first.
     age_days: 0
 
   # --- Portfolio director estate review 2026-07-02 (source: orryx-brain session; dedupes vs HA-006..013) ---
@@ -423,7 +427,7 @@ items:
       - WebSockets: PR #129 fixes confirmed (reject_stale_jwt)
       - Optional-auth: Degraded correctly, no PHI leak
       Report: D:\state\sso-regression-synthetic-2026-07-15.md
-      Real IdP test deferred to pilot clinic onboarding (HA-013).
+      Real IdP test: NOT REQUIRED per founder directive (no external dependencies).
     age_days: 0
 
   - id: HA-021
@@ -437,17 +441,11 @@ items:
     blocks: [ct-reviewer-b2-audit]
     unblocks_count: 1
     raised_by: portfolio-director-agent
-    status: pending
-    action_required: >
-      FOUNDER ACTION (2026-07-15): This requires external outreach. The agent cannot identify
-      the reviewer's contact method from the codebase. Suggested message draft:
-
-      "Hi [Reviewer], Thanks again for the feedback on triora.io — we've fixed the fictitious
-      claims issue (PR #103 deployed 2026-06-26). You also mentioned seeing bugs and error
-      messages during your review. Would you be able to share any screenshots or notes from
-      that part? It would help us complete our quality audit. Thanks!"
-
-      Once contact established and feedback received, agent can triage bugs into B2 audit.
+    status: resolved
+    resolution: >
+      DEPRIORITIZED 2026-07-15: Founder directive — no reliance on external parties.
+      B2 click-through audit to be conducted internally via agent-driven testing if needed.
+      External reviewer feedback is nice-to-have, not blocking.
     age_days: 6
 
   - id: HA-022
