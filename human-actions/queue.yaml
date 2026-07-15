@@ -615,6 +615,8 @@ items:
     blocks: [pillarworks-security]
     raised_by: reconciler-2026-07-14
     status: pending
+    pillarworks_owned: true
+    note: "EXCLUDED from non-Pillarworks sprint per sprint plan scope. Pillarworks session owns."
     age_days: 0
 
   - id: ORC-33
@@ -663,7 +665,8 @@ items:
     detail: "07-08→11 dark stretch + 07-12 mass-SKIP cleared. Security/dependency-analysis/production-health all fresh."
     blocks: []
     raised_by: reconciler-2026-07-14
-    status: pending
+    status: resolved
+    resolution: "Confirmed cleared per detail - blackout 07-08→12 resolved, routines fresh."
     age_days: 0
 
   - id: ORC-32
