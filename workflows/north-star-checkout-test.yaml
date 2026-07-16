@@ -1,0 +1,121 @@
+# North Star: First Production Checkout Test
+# Execution: Hybrid (Claude Code CLI + Claude Code App browser steps)
+# Purpose: Validate full payment lifecycle with LIVE Stripe
+
+name: north-star-checkout-test
+description: Complete first production checkout and verify full payment lifecycle
+created: 2026-07-15
+north_star: true
+
+# Prerequisites (all must be green)
+prerequisites:
+  - name: stripe_live_deployed
+    check: "kubectl get secret pillarworks-secrets -o jsonpath='{.data.STRIPE_SECRET_KEY}' | base64 -d | cut -c1-7"
+    expect: "sk_live"
+    status: VERIFIED
+
+  - name: pods_healthy
+    check: "kubectl get pods -l app=pillarworks-backend -o jsonpath='{range .items[*]}{.status.phase}{\"\\n\"}{end}'"
+    expect: "All Running"
+    status: VERIFIED
+
+  - name: api_health
+    check: "curl -sf https://build.orryx.dev/api/v1/health/gateway"
+    expect: "HTTP 200"
+    status: VERIFIED
+
+  - name: ses_verified
+    check: "aws sesv2 get-email-identity --email-identity pillarworks.orryx.dev --region us-east-1"
+    expect: "VerificationStatus: SUCCESS"
+    status: VERIFIED
+
+# Test phases
+phases:
+  - id: 1
+    name: "Production Checkout"
+    executor: "Claude Code App (browser)"
+    steps:
+      - Navigate to build.orryx.dev
+      - Initiate Pro plan checkout ($349 AUD)
+      - Use Stripe test card: 4000000000000077
+      - Complete with verifiable email
+      - Screenshot success page
+    outputs:
+      - transaction_id
+      - checkout_timestamp
+      - email_used
+
+  - id: 2
+    name: "Receipt Email Verification"
+    executor: "Claude Code App (browser) + CLI"
+    steps:
+      - Check inbox for receipt from noreply@pillarworks.orryx.dev
+      - Verify email headers (DKIM signature)
+      - Screenshot email content
+    outputs:
+      - email_received: boolean
+      - delivery_time_seconds
+      - dkim_valid: boolean
+
+  - id: 3
+    name: "Refund Processing"
+    executor: "Claude Code App (browser)"
+    steps:
+      - Navigate to Stripe dashboard
+      - Find transaction by ID
+      - Process full refund ($349 AUD)
+      - Screenshot confirmation
+    outputs:
+      - refund_id
+      - refund_status
+
+  - id: 4
+    name: "Webhook Verification"
+    executor: "Claude Code CLI"
+    steps:
+      - Check pod logs for webhook receipt
+      - Verify refund webhook processed
+    script: |
+      kubectl logs -l app=pillarworks-backend --since=10m | grep -i "webhook\|refund"
+    outputs:
+      - webhook_received: boolean
+      - processing_status
+
+  - id: 5
+    name: "Health Verification"
+    executor: "Claude Code CLI"
+    steps:
+      - Run full health check suite
+      - Verify no regressions
+    script: |
+      curl -sf https://build.orryx.dev/api/v1/health/gateway | jq '.'
+      kubectl get pods -l app=pillarworks-backend
+    outputs:
+      - health_status
+      - pod_restarts
+
+# Success criteria
+success_criteria:
+  - checkout_completed: true
+  - receipt_email_delivered: true
+  - refund_processed: true
+  - webhook_received: true
+  - no_pod_crashes: true
+
+# Completion actions
+on_success:
+  - Update go-live-gate.json: gate_status = CLEAR
+  - Update LB-013 to RESOLVED
+  - Update operations report
+  - Create announcement: "Pillarworks payment system operational"
+
+on_failure:
+  - Log failure details to D:/state/north-star-failure-{timestamp}.json
+  - Create escalation todo with specific failure point
+  - Do NOT mark any blockers as resolved
+
+# Model allocation
+models:
+  browser_steps: claude_code_app  # Human-guided browser
+  verification: haiku             # Simple checks
+  diagnosis: opus                 # If something fails

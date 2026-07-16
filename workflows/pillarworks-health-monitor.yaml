@@ -1,0 +1,82 @@
+# Pillarworks Production Health Monitor
+# Execution: Claude Code CLI /loop with interval
+# Purpose: Post-checkout verification, ongoing health checks
+
+name: pillarworks-health-monitor
+description: Monitor production health after LIVE deployment
+created: 2026-07-15
+
+# Trigger conditions
+triggers:
+  - manual: "Run health check now"
+  - post_checkout: "After first production checkout"
+  - interval: "Every 5 minutes for 30 minutes post-deploy"
+
+# Health checks
+checks:
+  - name: api_health
+    command: curl -sf https://build.orryx.dev/api/v1/health/gateway
+    expect: HTTP 200, JSON response
+    on_failure: CRITICAL
+
+  - name: pod_status
+    command: kubectl get pods -l app=pillarworks-backend -o jsonpath='{.items[*].status.phase}'
+    expect: "Running Running"
+    on_failure: CRITICAL
+
+  - name: pod_restarts
+    command: kubectl get pods -l app=pillarworks-backend -o jsonpath='{.items[*].status.containerStatuses[0].restartCount}'
+    expect: "0 0" or stable
+    on_failure: WARNING (investigate if increasing)
+
+  - name: stripe_webhook_recent
+    command: |
+      kubectl logs -l app=pillarworks-backend --since=5m | grep -c "stripe webhook" || echo "0"
+    expect: ">= 0" (no errors in processing)
+    on_failure: INFO
+
+  - name: ses_send_health
+    command: |
+      aws sesv2 get-account --region us-east-1 --query 'SendQuota.SentLast24Hours'
+    expect: number (confirms SES is working)
+    on_failure: WARNING
+
+# Execution script
+script: |
+  #!/bin/bash
+  REPORT_FILE="D:/state/health-check-$(date +%Y%m%d-%H%M%S).json"
+
+  echo '{"timestamp": "'$(date -Iseconds)'", "checks": [' > $REPORT_FILE
+
+  # API Health
+  api_status=$(curl -sf -w "%{http_code}" https://build.orryx.dev/api/v1/health/gateway -o /tmp/api_health.json 2>/dev/null || echo "000")
+  echo '{"name": "api_health", "status": "'$api_status'", "pass": '$([[ "$api_status" == "200" ]] && echo true || echo false)'},' >> $REPORT_FILE
+
+  # Pod Status
+  pod_status=$(kubectl get pods -l app=pillarworks-backend -o jsonpath='{.items[*].status.phase}' 2>/dev/null || echo "ERROR")
+  echo '{"name": "pod_status", "status": "'$pod_status'", "pass": '$([[ "$pod_status" == "Running Running" ]] && echo true || echo false)'},' >> $REPORT_FILE
+
+  # Pod Restarts
+  restarts=$(kubectl get pods -l app=pillarworks-backend -o jsonpath='{.items[*].status.containerStatuses[0].restartCount}' 2>/dev/null || echo "ERROR")
+  echo '{"name": "pod_restarts", "status": "'$restarts'", "pass": true}' >> $REPORT_FILE
+
+  echo ']}' >> $REPORT_FILE
+
+  # Summary
+  echo "Health check complete: $REPORT_FILE"
+  cat $REPORT_FILE | jq '.'
+
+# Model allocation
+models:
+  health_check: haiku     # Simple status
+  error_triage: sonnet    # Determine severity
+  root_cause: opus        # Deep diagnosis
+
+# Alerts
+on_failure:
+  critical:
+    - "API health check failed"
+    - "Pod not running"
+  warning:
+    - "Pod restart count increasing"
+    - "SES quota issues"

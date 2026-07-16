@@ -1,0 +1,92 @@
+# Pillarworks PR Cascade Merge Workflow
+# Execution: Claude Code CLI with /loop or manual sequential
+# Model allocation: haiku for status checks, sonnet for conflict resolution
+
+name: pillarworks-pr-cascade
+description: Sequentially merge CI-green PRs to main, rebasing as needed
+repo: alexmclaren/pillarworks-build-mvp
+created: 2026-07-15
+
+# PR merge order (dependencies resolved)
+queue:
+  - pr: 312
+    title: "Feature gate TIER_LIMITS derive"
+    prereq: CI green
+    action: merge --squash
+
+  - pr: 327
+    title: "Gateway health Bedrock/S3 fix"
+    prereq: PR #312 merged
+    action: rebase origin/main, then merge --squash
+
+  - pr: 323
+    title: "AUTH_EMAIL_SEND_FAILED marker"
+    prereq: PR #327 merged
+    action: merge --squash
+
+  - pr: 321
+    title: "Email links to SPA routes"
+    prereq: PR #323 merged
+    action: merge --squash
+
+  - pr: 318
+    title: "Mount pricing router"
+    prereq: PR #321 merged
+    action: merge --squash
+
+  - pr: 313
+    title: "Log CORS preflight rejections"
+    prereq: PR #318 merged
+    action: merge --squash
+
+# Execution script (bash)
+script: |
+  #!/bin/bash
+  set -e
+  cd D:/pillarworks-build-mvp
+
+  merge_pr() {
+    local pr=$1
+    echo "Processing PR #$pr..."
+
+    # Check CI status
+    status=$(gh pr view $pr --json statusCheckRollup --jq '.statusCheckRollup[] | select(.conclusion != "SUCCESS") | .name' 2>/dev/null || echo "")
+    if [ -n "$status" ]; then
+      echo "PR #$pr has failing checks: $status"
+      return 1
+    fi
+
+    # Check if up to date with base
+    mergeable=$(gh pr view $pr --json mergeable --jq '.mergeable')
+    if [ "$mergeable" != "MERGEABLE" ]; then
+      echo "Rebasing PR #$pr..."
+      gh pr checkout $pr
+      git fetch origin main
+      git rebase origin/main
+      git push --force-with-lease
+      sleep 30  # Wait for CI to restart
+    fi
+
+    # Merge
+    gh pr merge $pr --squash --delete-branch
+    echo "PR #$pr merged successfully"
+  }
+
+  for pr in 312 327 323 321 318 313; do
+    merge_pr $pr || echo "Skipping PR #$pr due to issues"
+    sleep 10  # Let CI stabilize
+  done
+
+  echo "Cascade complete. Verifying main..."
+  gh run list --limit 1 --json conclusion --jq '.[0].conclusion'
+
+# Model allocation
+models:
+  status_check: haiku      # Fast, cheap
+  conflict_resolution: sonnet  # Needs judgment
+  error_diagnosis: opus    # Complex debugging
+
+# Alerts
+on_failure:
+  - Log to D:/state/workflow-failures.log
+  - Create todo item for manual resolution
