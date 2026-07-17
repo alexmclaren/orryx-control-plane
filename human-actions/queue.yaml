@@ -1050,7 +1050,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: PR-03
+  - id: HA-035
     type: APPROVE
     title: "Ratify Clinical.Trials + orryx-flow MVP scope-of-record (.proposed.json, pending since 2026-07-02)"
     detail: >
@@ -1067,7 +1067,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: AI-52
+  - id: AI-55
     type: UNBLOCK
     title: "Fix broken fortnightly ISO-week gate in innovation-backlog-routine SKILL.md"
     detail: >
@@ -1296,5 +1296,21 @@ items:
       re-open this queue entry. Related: #147/#148 PHI-audit PRs also carry the same review tag.
     blocks: [ct-phi-compliance, ct-release]
     raised_by: release-changelog-followup-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-030
+    type: APPROVE
+    title: "Approve orphan-NAT/EIP teardown apply (FinOps FO-02/FO-03, ~$40.30/mo)"
+    detail: >
+      finops-review-2026-07-13 live-verified orphan NAT nat-020b1b6e38fcc986a still running in
+      EMPTY VPC vpc-033afe645e8b82a30 ($36.65/mo) + idle EIP 3.218.135.56 in us-east-1 ($3.65/mo),
+      standing ~40 days. Engineering work is filed as orryx-brain issue #186 (recut the
+      teardown-orphan-ap2 terraform from CLOSED PR #115 onto a fresh branch). Human gate: approve
+      the terraform apply after the two pre-checks pass (EIP 15.134.5.137 not externally
+      allowlisted; no DNS A-record at 3.218.135.56). Companion preventive item: orryx-brain
+      issue #187 (free S3 gateway endpoint on the orryx-mcp VPC — no approval gate, engineering-only).
+    blocks: [finops-fo02, finops-fo03]
+    raised_by: finops-routine-2026-07-13
     status: pending
     age_days: 0
