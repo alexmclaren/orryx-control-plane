@@ -1267,7 +1267,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-028
+  - id: HA-036
     type: UNBLOCK
     title: "Rotate the outstanding credentials behind ORC-01 — audit resolved, rotation did NOT"
     detail: >
@@ -1312,5 +1312,22 @@ items:
       issue #187 (free S3 gateway endpoint on the orryx-mcp VPC — no approval gate, engineering-only).
     blocks: [finops-fo02, finops-fo03]
     raised_by: finops-routine-2026-07-13
+    status: pending
+    age_days: 0
+
+  - id: HA-031
+    type: UNBLOCK
+    title: "Rotate prod Google OAuth client secret (LIVE-VERIFIED unrotated ~6mo) — NEW-09 resolution overstated"
+    detail: >
+      Live SM DescribeSecret 2026-07-17 (ap-southeast-2): orryx/triora/prod/google-oauth-client-secret
+      LastChangedDate=2026-01-09, LastRotatedDate=null — the prod secret VALUE has never been rotated
+      (~6.2mo). NEW-09's 07-15 resolution ("Google OAuth ROTATED") refers to the git-history/SM-migration
+      of the CT-history credential, NOT this prod secret value — the two were conflated. Action (founder,
+      vendor console): rotate the client secret in Google Cloud Console (Triora OAuth client), update the
+      SM secret value, restart consumers. Second leg of the genuine credential residual after NEW-12
+      (devops-2026-07-12 / eod-2026-07-12 EOD-01); capability-benchmark residual tripwire re-fires
+      2026-07-21 if NEW-12 + this are still open.
+    blocks: [triora-security-posture]
+    raised_by: frontier-architecture-session-2026-07-17
     status: pending
     age_days: 0
