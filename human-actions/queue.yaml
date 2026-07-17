@@ -1091,8 +1091,8 @@ items:
     detail: >
       capability-benchmarking-routine is also fortnightly (per routine-schedule.json).
       If its SKILL.md gate uses the same `Get-Date -UFormat %V` snippet it has the same
-      wrongful-skip/wrongful-run defect as AI-52. Grep scheduled-tasks/*/SKILL.md for
-      "UFormat %V" and apply the AI-52 fix pattern wherever found.
+      wrongful-skip/wrongful-run defect as AI-55. Grep scheduled-tasks/*/SKILL.md for
+      "UFormat %V" and apply the AI-55 fix pattern wherever found.
     blocks: [fleet-cadence-integrity]
     raised_by: innovation-backlog-run-2026-07-17
     status: pending
@@ -1136,6 +1136,119 @@ items:
       D:\Vault\main\30-Projects\Pillarworks-Sprint-2026-07-15.md.
     blocks: [pillarworks-first-revenue, pw-mvp-004, pw-mvp-008]
     raised_by: mvp-delivery-followup-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-028
+    type: UNBLOCK
+    title: "CT: re-run Manual Rollback with ENV=pilot (EOD-03 — one 5-min run closes ~5.5mo liability)"
+    detail: >
+      The 07-15 run (29388927541) proved OIDC + input validation but targeted the
+      non-existent ENV=staging. NO ENV=pilot re-run has been dispatched since (devops-17
+      live-gh verified). The manual rollback path on the only PHI platform remains
+      functionally unproven. Action: dispatch Manual Rollback with ENV=pilot; confirm it
+      resolves the pilot service/task-defs and completes describe->rollback->verify.
+      NOTE: queue entries ORC-33 / DO-03 above are marked resolved but cover only the
+      OIDC-validation leg — this item is the outstanding valid-target run (see HA-027
+      for the acceptance-wording fix). Source: eod-summary-2026-07-17 EOD-03;
+      devops-summary-2026-07-17 DO-03.
+    blocks: [ct-ops-resilience, ct-mvp-001]
+    raised_by: eod-distillation-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-029
+    type: UNBLOCK
+    title: "CT: verify first scheduled health-check green + re-run provision-oidc-roles.sh (EOD-41)"
+    detail: >
+      DO-36 is remediation-complete (IAM applied cloud-side 07-16, dead-task-def fixed,
+      #152 merged, manual dispatch GREEN). Two residuals: (1) devops-routine confirms the
+      first scheduled run on main (~2026-07-17T04:05Z) went green — if red it is a NEW
+      mechanism, do NOT re-open the IAM/task-def diagnosis; (2) HUMAN re-runs
+      scripts/provision-oidc-roles.sh against acct 490004631560 so #152's new
+      resource-scoped sqs:GetQueueAttributes grant lands cloud-side (code-only until then;
+      the restored check may still fail its SQS step). Queue entry DO-36 above is
+      stale-resolved (it tracked the #145 apply only). Source: eod-summary-2026-07-17
+      EOD-41; devops-summary-2026-07-17 DO-36; security-review-2026-07-17 P1.
+    blocks: [ct-monitoring-closure]
+    raised_by: eod-distillation-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-030
+    type: UNBLOCK
+    title: "Push unpushed go-live config: control-plane 43602fa + standards f932cb6 + 6 untracked dirs (EOD-46/DO-38)"
+    detail: >
+      Go-live-critical orchestration config exists ONLY on this machine: orryx-control-plane
+      main commit 43602fa (Pillarworks go-live workflow definitions), orryx-standards
+      f932cb6, plus 6 untracked routine-prompt dirs incl. stripe-go-live-gate.
+      Single-disk loss risk on the revenue path. Action: git push both repos + commit/track
+      the 6 untracked dirs. Source: eod-summary-2026-07-17 EOD-46; devops-summary-2026-07-17
+      DO-38; portfolio-summary-2026-07-17 punch-list #3.
+    blocks: [pillarworks-first-revenue, stripe-go-live-gate]
+    raised_by: eod-distillation-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-031
+    type: UNBLOCK
+    title: "BLOCKING (7th-week trigger MET): land RF-13b live-rotation cross-check in security-routine (EOD-42)"
+    detail: >
+      security-review-2026-07-17 re-asserted NEW-22 "UNROTATED ~5.0mo" a 7TH consecutive
+      week from git-history-presence with no live cloud call (rotation is CloudTrail-attested
+      2026-07-03; containment held fleet-wide again). Per the capability-benchmark-14
+      pre-commitment, the 7th week converts this from routine self-improvement into a
+      BLOCKING named-human action. Action: land RF-13b — security-routine must live-query
+      SM DescribeSecret.LastChangedDate + RDS MasterUserSecret and record verified_method
+      before asserting any credential "unrotated" — BEFORE its next weekly pass.
+      Escalates existing AI-45 (same fix, now BLOCKING). Source: eod-summary-2026-07-17
+      EOD-42.
+    blocks: [security-evidence-integrity, AI-45]
+    raised_by: eod-distillation-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-032
+    type: APPROVE
+    title: "Founder sign-off on CT PR #142 (site_id CASCADE->SET-NULL PHI-loss fix) — sole held PR, 11d"
+    detail: >
+      Sibling #133 (compliance sign-off record) merged 07-16; #142 is the last gate on the
+      Wave-A PHI-loss fix pair and the only open CT PR. Held since 2026-07-06.
+      Source: eod-summary-2026-07-17 EOD-23; ceo-summary-2026-07-17 ESC-CEO-016;
+      cto-review-2026-07-17 H4.
+    blocks: [ct-wave-a-closure]
+    raised_by: eod-distillation-2026-07-17
+    status: pending
+    age_days: 11
+
+  - id: HA-033
+    type: UNBLOCK
+    title: "mcp-gateway: run manual deploy.sh to ship merged prod-dep bumps (helmet 8.3.0 / ws 8.21.1) (EOD-48/DO-39)"
+    detail: >
+      The 07-16 dependabot train merged security-relevant prod deps but deploy is manual —
+      CI-green != deployed; live mcp.orryx.dev still runs the old deps. QA verified the
+      router suite green (22/22) on exactly the bumped dependency set. Repo PROTECTED
+      (never a teardown candidate). Source: eod-summary-2026-07-17 EOD-48;
+      devops-summary-2026-07-17 DO-39; qa-summary-2026-07-17 action #2.
+    blocks: [mcp-gateway-supply-chain]
+    raised_by: eod-distillation-2026-07-17
+    status: pending
+    age_days: 1
+
+  - id: HA-034
+    type: JUDGE
+    title: "Reconcile DEC-ESC-CEO-027 scope: CT history-scrub + NEW-23/NEW-09 vendor rotations — dropped or owed?"
+    detail: >
+      Intra-fleet conflict flagged by eod-summary-2026-07-17 Caveats: devops-17 + cto-17
+      state the CT history-scrub was DROPPED per DEC-ESC-CEO-027 (and this queue marks
+      NEW-23/NEW-09 resolved), while security-review-2026-07-17 + prior EODs carry the
+      CT-cluster history-scrub AND the NEW-23 (AACT) / NEW-09 (Pinecone/OpenAI/Google-OAuth
+      ~101d) vendor-console rotations as OWED and over-SLA. Approval-governance to read
+      DEC-ESC-CEO-027's actual recorded scope (NEW-22-only vs whole cluster; scrub-only vs
+      scrub+rotation) and rule once, so neither side silently wins. NEW-22 live rotation
+      itself is RESOLVED (2026-07-03, CloudTrail-attested) — do NOT re-page that.
+    blocks: [credential-incident-closure]
+    raised_by: eod-distillation-2026-07-17
     status: pending
     age_days: 0
 
