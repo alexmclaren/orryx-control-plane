@@ -3,7 +3,7 @@
 # type: APPROVE | DECIDE | JUDGE | UNBLOCK
 # column mapping: DECIDE/APPROVE -> DECIDE TODAY ; JUDGE -> NEEDS JUDGEMENT ; UNBLOCK -> DO NOW
 version: "1.0"
-last_updated: "2026-07-15"
+last_updated: "2026-07-17"
 
 items:
   - id: HA-001
@@ -961,4 +961,195 @@ items:
     raised_by: reconciler-2026-07-14
     status: resolved
     resolution: "RESOLVED 2026-07-15: PR #145 already merged (2026-07-12). No founder action needed."
+    age_days: 0
+
+  - id: AI-46
+    type: APPROVE
+    title: "Apply PE-18 producer gate: re-stat-before-SKIP + PRODUCER_NOT_YET_FIRED re-fire"
+    detail: >
+      One edit to scheduled-tasks/_shared/PRODUCER_PRECHECK.md (embedded 36/36 fleet-wide).
+      Fixes the midnight false-SKIP race: on 2026-07-12 four consumers (ceo/cto/qa/commercial)
+      fired at placeholder T00:00:00Z, stat'd the previous baseline, manufactured a false
+      "5-day fleet blackout" and a false operator escalation (QA-90 "restart the scheduler" —
+      the scheduler was healthy; repo-health cohort was on disk at 08:29). Same race
+      false-SKIP'd memory-consolidation on its live EOD input, dropping the cycle's learnings.
+      UPDATE 2026-07-17 (prompt-evolution-2026-07-12): PE-18's clauses are ALREADY on disk
+      (PRODUCER_PRECHECK.md L27-36) and the race fired anyway — the 2a re-stat is conditional
+      ("if real reasoning happened between run-start and here") and a midnight-fire-then-immediate-SKIP
+      never reaches it. Approving "apply PE-18" as written is a NO-OP. The correct action is PE-22:
+      make the pre-SKIP re-stat UNCONDITIONAL + mtime-based (glob reports/<producer>/*-{today}.md,
+      read real mtime, cite glob+mtime in the SKIP record; a T00:00:00Z placeholder run_id is itself
+      a mandatory re-check trigger). Draft text in prompt-evolution-2026-07-12.md PE-22.
+    blocks: [fleet-producer-reliability]
+    raised_by: autonomous-improvement-2026-07-12
+    updated_by: prompt-evolution-2026-07-12 (via session 2026-07-17)
+    status: pending
+    age_days: 0
+
+  - id: AI-45
+    type: APPROVE
+    title: "Make credential live-state check a mechanical pre-report gate in security-routine"
+    detail: >
+      NEW-22 phantom-CRITICAL re-asserted off git-history a 4TH consecutive week (security-07-12)
+      despite ledger SR-01=rotated + CloudTrail confirmation. capability-benchmark-2026-07-07
+      pre-registered this exact threshold: 4th week = verification_contract confirmed
+      non-self-enforcing -> promote to a mechanical gate (live SM LastChangedDate / RDS
+      MasterUserSecret check REQUIRED before any producer emits a credential as open CRITICAL).
+      Edit target: scheduled-tasks/security-routine/SKILL.md Machine-Handoff emit rules.
+    blocks: [evidence-integrity]
+    raised_by: autonomous-improvement-2026-07-12
+    status: pending
+    age_days: 0
+
+  - id: AI-51
+    type: UNBLOCK
+    title: "Re-fire memory-consolidation for 2026-07-12 (learnings not persisted)"
+    detail: >
+      memory-consolidation-2026-07-12 false-SKIP'd claiming eod-summary-2026-07-12 absent;
+      the EOD ran OK and exists. The 07-12 cycle's durable learnings (false-blackout correction,
+      FA-25, phantom 4th week) are NOT persisted until it re-fires or the next run catches up.
+    blocks: [compound-learning-loop]
+    raised_by: autonomous-improvement-2026-07-12
+    status: pending
+    age_days: 0
+
+  - id: PE-23
+    type: APPROVE
+    title: "Add stat-before-negative-escalation guard to qa-routine (would have suppressed QA-90)"
+    detail: >
+      On 2026-07-12 qa-routine minted QA-90 "restart repo-health/daily producer schedule;
+      investigate why all routines dark 07-08..07-12" — a false operator escalation pointed
+      at a healthy scheduler (the claimed-absent portfolio-summary-2026-07-12.md was on disk
+      at 08:29 AEST). One-line guard: before minting any escalation asserting a NEGATIVE
+      ("X did not run / producers dark / restart the scheduler"), stat the file(s) that would
+      prove absence (path + glob + mtime) and cite them; if the file exists, do NOT mint.
+      A single Test-Path would have suppressed QA-90. Cheapest safety win in the 07-12 set.
+      Edit target: scheduled-tasks/qa-routine/SKILL.md. Draft text in
+      prompt-evolution-2026-07-12.md PE-23 (also FA-25 / AI-52).
+    blocks: [evidence-integrity]
+    raised_by: prompt-evolution-2026-07-12 (via session 2026-07-17)
+    status: pending
+    age_days: 0
+
+  - id: PE-21
+    type: APPROVE
+    title: "Add validate-fix-against-live-artifact + IaC merge!=apply guard (devops-routine); verify DO-36 actually cleared"
+    detail: >
+      Two-part. (1) Guard: before proposing OR accepting a remediation for a failing workflow,
+      read the LIVE failing step's log and confirm the diff touches the line that actually fails;
+      for an IaC/policy PR, confirm the APPLY step lands the change (merge alone does not).
+      Empirically confirmed at cost: PR #139 merged 07-06 against a never-reached step and left
+      the CT Automation Health Check red 8 consecutive runs. Edit target:
+      scheduled-tasks/devops-routine/SKILL.md. Draft text in prompt-evolution-2026-07-12.md PE-21
+      (RF-14 / FA-24). (2) VERIFY DO-36's resolution: it was closed 2026-07-15 on "PR #145 already
+      merged" — but #145 is IaC, so merge != apply per FA-12; confirm the put_policy upsert ran
+      against AWS AND the health check is green post-merge before treating DO-36 as cleared.
+      If the check is still red, DO-36's closure is itself the PE-21 failure mode.
+    blocks: [evidence-integrity]
+    raised_by: prompt-evolution-2026-07-12 (via session 2026-07-17)
+    status: pending
+    age_days: 0
+
+  - id: PR-03
+    type: APPROVE
+    title: "Ratify Clinical.Trials + orryx-flow MVP scope-of-record (.proposed.json, pending since 2026-07-02)"
+    detail: >
+      Both D:\state\mvp-scope\Clinical.Trials.proposed.json and orryx-flow.proposed.json
+      have sat unratified 15 days; every downstream reader grades CT at 20% ratified vs
+      ~60% reality (mvp-progress MV-01/MV-02). The MV-03 blocker is now CLEARED: the
+      ct-mvp-001 rollback conflict resolved 2026-07-15 (ORC-33 — rollback-ecs.yml OIDC
+      auth proven via workflow_dispatch; staging-step fail expected, no service deployed).
+      At ratification also: (a) keep ct-mvp-open-004 (Wave-5 match-quality) OUT of the
+      ratified MVP set — scope inflation, park in innovation backlog (MV-04); (b) reconcile
+      the non-schema status value 'design-complete' on flow-mvp-024 (MV-07).
+    blocks: [mvp-scope-truth, roadmap-grading]
+    raised_by: product-routine-followup-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: AI-52
+    type: UNBLOCK
+    title: "Fix broken fortnightly ISO-week gate in innovation-backlog-routine SKILL.md"
+    detail: >
+      The parity gate uses `Get-Date -UFormat %V`, which mis-computed the week on
+      2026-07-12 (returned 29; actual ISO week 28) causing a wrongful SKIP of an
+      on-week run; 2026-06-30 (odd week 27) ran when it should have skipped. Fix in
+      C:\Users\alexa\.claude\scheduled-tasks\innovation-backlog-routine\SKILL.md:
+      (a) replace %V with [System.Globalization.ISOWeek]::GetWeekOfYear((Get-Date));
+      (b) anchor the fortnight to a date instead of week parity —
+      floor((today - 2026-06-22).Days / 7) % 2 -eq 0 — so 53-week years don't produce
+      back-to-back odd weeks / a 3-week gap. Evidence: fleet-exit-log.jsonl rows
+      2026-06-30 (OK on odd week) and 2026-07-12 (SKIP logged "ISO week 29" on an even week).
+    blocks: [innovation-backlog-cadence]
+    raised_by: innovation-backlog-run-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: AI-53
+    type: UNBLOCK
+    title: "Audit other fortnightly routines for the same %V ISO-week bug"
+    detail: >
+      capability-benchmarking-routine is also fortnightly (per routine-schedule.json).
+      If its SKILL.md gate uses the same `Get-Date -UFormat %V` snippet it has the same
+      wrongful-skip/wrongful-run defect as AI-52. Grep scheduled-tasks/*/SKILL.md for
+      "UFormat %V" and apply the AI-52 fix pattern wherever found.
+    blocks: [fleet-cadence-integrity]
+    raised_by: innovation-backlog-run-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: AI-54
+    type: UNBLOCK
+    title: "Canonicalise routine_id in fleet-exit-log emit rules (innovation-backlog vs -routine)"
+    detail: >
+      fleet-exit-log.jsonl contains rows under both "innovation-backlog" (2026-07-04 SKIP)
+      and "innovation-backlog-routine". If fleet-health-routine keys on routine_id the
+      short-form row is orphaned and consecutive-run accounting is wrong. Fix: state the
+      canonical id explicitly in the shared PRODUCER_PRECHECK.md exit-record contract
+      ("routine_id MUST equal the scheduled-task directory name") and have fleet-health
+      treat known aliases as equal for historical rows.
+    blocks: [fleet-health-accounting]
+    raised_by: innovation-backlog-run-2026-07-17
+    status: pending
+    age_days: 0
+
+  # --- mvp-delivery follow-up 2026-07-17 (source: mvp-progress-2026-07-13 + Stripe preflight 2026-07-15) ---
+
+  - id: HA-026
+    type: UNBLOCK
+    title: "Pillarworks Stripe LIVE: fix 4 preflight launch blockers before any checkout"
+    detail: >
+      ORC-32/HA-007 read RESOLVED (sk_live_ deployed) but the 2026-07-15 preflight audit
+      (browser + K8s verified, acct_1SDkydCzVzICIvzK) found checkout is NOT safe:
+      (1) Stripe business verification PAST DUE (deadline Dec 30 2025) — payouts paused,
+      payments pause warned; Alex-only upload (Settings -> Business -> Account status).
+      (2) Mixed live/test prod config in pillarworks-secrets: STRIPE_PRICE_ID_PRO/_ENTERPRISE
+      are TEST-mode IDs (fail "No such price" live) and STRIPE_PUBLISHABLE_KEY is pk_test.
+      (3) NO live webhook endpoint in Stripe — Project Pass credits are granted ONLY in the
+      webhook handler, so a live pass purchase takes A$199 and grants NOTHING. Create live
+      endpoint at https://build.orryx.dev/webhooks/stripe, replace STRIPE_WEBHOOK_SECRET
+      with the live whsec, restart pods.
+      (4) Live catalog pricing wrong/duplicated (two 07-14 script generations; neither
+      matches marketed Pro A$349 / A$249 founding) — pricing decision needed first.
+      Test cards are BLOCKED in live mode; first checkout needs a real card (Alex).
+      Full detail: memory project_pillarworks_stripe_live_2026_07_15 + sprint doc
+      D:\Vault\main\30-Projects\Pillarworks-Sprint-2026-07-15.md.
+    blocks: [pillarworks-first-revenue, pw-mvp-004, pw-mvp-008]
+    raised_by: mvp-delivery-followup-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-027
+    type: JUDGE
+    title: "CT: tighten ct-mvp-001 rollback acceptance — 'runs green once' not 'OIDC configured'"
+    detail: >
+      Root cause of the MV-03 phantom-shipped: "OIDC configured" was read as "rollback works".
+      ORC-33's 07-15 test proved auth only (staging step failed, no service deployed) — a full
+      green end-to-end run is still unobserved. At ratification of Clinical.Trials.proposed.json
+      (PR-03), set ct-mvp-001 acceptance to "standalone rollback-ecs.yml completes GREEN against
+      a real deploy at least once" and keep status in-flight (not shipped) until that run exists.
+      Also update the acceptance wording in the workflow docs so the ambiguity cannot recur.
+    blocks: [ct-ops-resilience, mvp-scope-truth]
+    raised_by: mvp-delivery-followup-2026-07-17
+    status: pending
     age_days: 0
