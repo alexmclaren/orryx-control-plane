@@ -1175,7 +1175,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-030
+  - id: HA-038
     type: UNBLOCK
     title: "Push unpushed go-live config: control-plane 43602fa + standards f932cb6 + 6 untracked dirs (EOD-46/DO-38)"
     detail: >
@@ -1190,7 +1190,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-031
+  - id: HA-039
     type: UNBLOCK
     title: "BLOCKING (7th-week trigger MET): land RF-13b live-rotation cross-check in security-routine (EOD-42)"
     detail: >
@@ -1493,5 +1493,83 @@ items:
       (AWS+SES SMTP pw, RDS master pw, 2nd staging-db pw, admin_seed_token) — rotate as batch.
     blocks: []
     raised_by: security-routine-2026-07-17
+    status: pending
+    age_days: 0
+
+  # --- failure-analysis follow-up 2026-07-17 (source: failure-analysis-2026-07-17.md) ---
+
+  - id: HA-037
+    type: APPROVE
+    title: "RF-16: add mechanical SKU-launch gate to ceo-routine + release-readiness (FA-27)"
+    detail: >
+      Project Pass A$199 shipped purchasable in prod (#326) against 4 unresolved Stripe
+      preflight blockers incl. NO live webhook (pay-without-grant). The 07-15 preflight
+      DETECTED all four and gated nothing — preflight is advisory, not blocking. Code has
+      a required deploy gate; a purchasable SKU had none (launch-gating asymmetry, RC-H).
+      Fix: add a standing BLOCKING rule to scheduled-tasks/ceo-routine/SKILL.md +
+      release-readiness: no SKU/price/purchase path is declared launched without (1) an
+      end-to-end LIVE test charge verifying entitlement grant (webhook received,
+      entitlement row created), (2) live price objects matching marketed pricing,
+      (3) payouts enabled. Encode mechanically in the stripe-go-live-gate config once
+      pushed (HA-030). Immediate incident mitigation is HA-026 (separate); interim per
+      ceo-17 s8: disable the purchase path if the webhook cannot land promptly.
+      Source: failure-analysis-2026-07-17 FA-27/RF-16; ceo-summary-2026-07-17 ESC-CEO-037.
+    blocks: [pillarworks-first-revenue, launch-gating]
+    raised_by: failure-analysis-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-038
+    type: APPROVE
+    title: "RF-10b rollout: copy the proven re-fire-on-landing clause into engineering / approval-governance / ceo SKILL.md (FA-26)"
+    detail: >
+      The ordering race SKIPped engineering-17 (02:39Z; ceo-17 landed 02:47Z) and
+      approval-governance-17 (02:57Z; MOP-17 landed 03:01Z) this morning — detection was
+      CORRECT both times but the day's work never ran. The fix pattern is PROVEN:
+      memory-consolidation re-fired 2026-07-17T02:12Z, superseding its own 07-15 SKIP row
+      after its producer landed, and completed a full run. Action: add to each named
+      consumer's SKILL.md: "If this run SKIPs on PRODUCER_NOT_YET_FIRED, re-check for the
+      producer's output at the next wake window the same day; when it has landed, run
+      fully and append an exit row noting it supersedes the earlier SKIP row." Do NOT
+      re-time windows. Distinct from AI-46/PE-22 (unconditional pre-SKIP re-stat) — that
+      fixes the detection read; this fixes the undone-work half. Source:
+      failure-analysis-2026-07-17 FA-26/RF-10b; eod-summary-2026-07-17 EOD-17.
+    blocks: [fleet-producer-reliability, AI-46]
+    raised_by: failure-analysis-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-039
+    type: APPROVE
+    title: "failure-analysis-routine SKILL.md: window-position-from-exit-log pre-check + PENDING-adjudication rule"
+    detail: >
+      FA is scheduled 18:00 AEST but fired 09:56 on 07-15 (forced a SHORT report) and
+      13:05 on 07-17 (harmless — spine had just completed). Add to the FA pre-check:
+      (1) determine window position by comparing run time to the spine's landing times in
+      fleet-exit-log.jsonl, NOT the nominal schedule — full analysis requires a completed
+      same-day spine regardless of clock time; (2) when a same-day adjudication event
+      post-dates the run (e.g. DO-36's ~04:05Z scheduled health-check), record it as
+      PENDING with the exact expected timestamp, never as closed. Source:
+      failure-analysis-2026-07-17 Routine Improvements (self-note).
+    blocks: []
+    raised_by: failure-analysis-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-040
+    type: JUDGE
+    title: "Reconcile DEC-ESC-CEO-027 scrub scope: NEW-22-only vs whole CT credential cluster"
+    detail: >
+      Intra-fleet conflict flagged by eod-17 and carried unresolved: devops-17 + cto-17
+      state the CT history-scrub was DROPPED per DEC-ESC-CEO-027; eod-16 + security-17
+      carry the CT-cluster history-scrub (NEW-22/23/09 family) as OWED and ~19d over-SLA
+      (SR-02/03/04). One reading is NEW-22-only accepted-risk; the other is whole-cluster.
+      approval-governance to read the actual decision record in governance-decisions.json
+      and rule which scope governs, so neither side silently wins and security-routine's
+      ledger can align. NOTE: NEW-22 live ROTATION is RESOLVED 2026-07-03 regardless —
+      this item is scrub-scope only, do not re-page rotation. Source:
+      failure-analysis-2026-07-17 FA-03; eod-summary-2026-07-17 Caveats.
+    blocks: [security-evidence-integrity]
+    raised_by: failure-analysis-2026-07-17
     status: pending
     age_days: 0
