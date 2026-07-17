@@ -1283,7 +1283,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-029
+  - id: HA-037
     type: JUDGE
     title: "Adjudicate NEW-88 conflict — queue says boundary SECURE (07-15 audit), security-review 07-16 still holds it open"
     detail: >
