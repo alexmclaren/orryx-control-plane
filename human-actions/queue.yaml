@@ -1331,3 +1331,167 @@ items:
     raised_by: frontier-architecture-session-2026-07-17
     status: pending
     age_days: 0
+
+  # --- MOP-2026-07-17 follow-ups (source: master-operating-plan-2026-07-17.md; residuals of closed ORC rows + new streams) ---
+
+  - id: HA-028
+    type: UNBLOCK
+    title: "Push unpushed go-live orchestration config (ORC-37 / DO-38)"
+    detail: >
+      orryx-control-plane main commit 43602fa (Pillarworks go-live workflow definitions) +
+      orryx-standards main commit f932cb6 + 6 untracked routine-prompt dirs (incl.
+      stripe-go-live-gate) exist ONLY on this machine — single-disk loss risk on the
+      revenue path. Action: git push both repos + commit/track the 6 dirs. Do this FIRST
+      in the revenue-safety sitting (SEQ-0), before anything relies on the gating config.
+    blocks: [pillarworks-first-revenue, stripe-go-live-gating]
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-029
+    type: UNBLOCK
+    title: "CT rollback: one ENV=pilot smoke-run closes the ~5.5mo liability (ORC-33 residual)"
+    detail: >
+      ORC-33 was closed 2026-07-15 on the OIDC proof, but the manual-rollback path is still
+      functionally UNPROVEN against a live env — the 07-15 run targeted ENV=staging which has
+      no service (correct fail-close). Re-run Manual Rollback (rollback-ecs.yml) with
+      ENV=pilot; confirm the describe/rollback/verify path completes GREEN. SEQ-4: ct-mvp-001
+      must NOT be ratified "shipped" until this run exists (see HA-027 acceptance tightening).
+      ~5 minutes of operator time.
+    blocks: [ct-ops-resilience, mvp-scope-truth]
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-030
+    type: UNBLOCK
+    title: "CT health-check: verify first scheduled green + re-run provision-oidc-roles.sh (ORC-19 residual)"
+    detail: >
+      Fix #152 merged 07-16 (IAM grant WAS applied cloud-side 07-16 04:05-05:36Z, log-proven;
+      dead triora-trial-sync-pilot task-def tolerated; dispatch GREEN). Two residuals:
+      (1) confirm the first scheduled run on main (~04:05Z 2026-07-17, then subsequent) is
+      GREEN — devops-routine adjudicates; if red it is a NEW mechanism, do NOT re-open the
+      IAM/task-def diagnosis. (2) Operator re-runs scripts/provision-oidc-roles.sh against
+      acct 490004631560 so #152's NEW resource-scoped sqs:GetQueueAttributes grant lands
+      cloud-side (code-only until applied; the health-check SQS step may fail without it).
+    blocks: []
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-031
+    type: UNBLOCK
+    title: "Trigger pillarworks RLS staging apply (#351) -> unblocks 15d-old #266"
+    detail: >
+      PR #351 (human-triggered K8s Job for the RLS staging apply) landed 07-16. Operator
+      triggers the Job per docs/runbooks/RLS_STAGING_APPLY_RUNBOOK.md; only after a clean
+      staging apply does #266 (RLS fail-closed + secret scrub) leave DO-NOT-MERGE.
+      Keep strictly separate from the Stripe LIVE work.
+    blocks: [pillarworks-rls-fail-closed]
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-032
+    type: UNBLOCK
+    title: "Run orryx-mcp-gateway deploy.sh — merged security prod-dep bumps not deployed (DO-39)"
+    detail: >
+      The 07-16 dependabot train merged prod-dep bumps (helmet, ws) but deploy is manual
+      deploy.sh — CI-green is not deployed. Run deploy.sh to ship the security-relevant
+      bumps. Repo is PROTECTED (live active submodule — never a teardown candidate).
+    blocks: []
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-033
+    type: UNBLOCK
+    title: "SEQ-5: rescue CT stashes {6},{7} BEFORE further stripe-go-live source work (GH-01)"
+    detail: >
+      ~163d-old Stripe-billing source stashes stash@{6},{7} on Clinical.Trials now COLLIDE
+      with the active stripe-go-live branch (git-hygiene-17 GH-01, worse). Bundle-backup the
+      repo, then git stash branch each into rescue branches; NEVER drop without a
+      materialized file list; then triage PHI-authz stashes {1},{2}. Also pillarworks GH-02:
+      18 stashes incl. the 828-file source-deletion capture stash@{11} — same rescue pattern.
+      Sequencing rule: no further CT Stripe source work until {6},{7} are rescued.
+    blocks: [ct-stripe-golive-source-safety]
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-034
+    type: UNBLOCK
+    title: "Fix pillarworks issue #317 — onboarding wizard upload does not persist (funnel-blocking)"
+    detail: >
+      GitHub issue pillarworks-build-mvp#317 (open 3d, tagged CRITICAL): onboarding wizard
+      upload does not persist, no extraction jobs created. Sits at the top of the Stripe
+      conversion funnel — part of the ORC-36 revenue-safety cluster (a paying customer who
+      cannot onboard compounds the pay-without-grant hazard in HA-026). Engineering owns;
+      fix before treating Project Pass as launched.
+    blocks: [pillarworks-first-revenue]
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-035
+    type: JUDGE
+    title: "Doc/environment integrity triage: D:\\Orryx clobber + CSV-export overclaim (ORC-38)"
+    detail: >
+      (1) DOC-24: the D:\Orryx\ orphan signpost was CLOBBERED 2026-07-17 11:45 by a Magic
+      Patterns Vite project written by a foreign process — identify the writer; decide
+      keep+scope (then it needs git) vs restore the signpost. (2) DOC-25: customer docs at
+      pillarworks.io/docs claim CSV (BuildXact) export but the in-app button ships disabled
+      "Coming soon" (backend /export/buildxact-csv exists, frontend unwired) — engineering
+      either wires the frontend (cto-17: the smaller diff) or qualifies the docs line.
+      (3) DOC-26: clean up the stray 46-byte D:\nul artifact (bash misfire output) + find
+      the script writing Windows-style redirects under a POSIX shell.
+    blocks: []
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-036
+    type: APPROVE
+    title: "Founder sign-off on Clinical.Trials PR #142 (site_id CASCADE->SET-NULL PHI-loss fix)"
+    detail: >
+      Sole remaining founder-held PR of the Wave-A pair (11 days; sibling #133 merged 07-16
+      with the documented compliance sign-off). Review + merge decision closes the Wave-A
+      PHI-loss fix pair. Named decision-latency item in MOP-17 (ORC-16 residual — the
+      ORC-16 queue row was closed 07-15 before #142's hold aged out).
+    blocks: [ct-phi-compliance]
+    raised_by: orchestration-2026-07-17
+    status: pending
+    age_days: 0
+
+
+  - id: HA-032
+    type: UNBLOCK
+    title: "CT credential rotations NOT done — NEW-22 RDS ctadmin (~5.0mo) + NEW-23 AACT + NEW-09 Pinecone/OpenAI (GitHub issue Clinical_trials#160)"
+    detail: >
+      security-review-2026-07-17: ORC-01's 07-15 "resolved" was an AUDIT resolution only — the actual
+      rotations remain open. NEW-22 prod PHI-DB master pw unrotated ~5.0 months in git history (history
+      rewrite dropped per DEC-ESC-CEO-027, so rotation is the SOLE mitigation and has not happened).
+      NEW-23 AACT + NEW-09 Pinecone/OpenAI also unrotated (Google OAuth leg tracked separately as HA-031).
+      Full runbooks + verification steps in Clinical_trials issue #160. Founder/operator action:
+      rotate cloud-side, update SM, confirm dependents green, note completion for security-routine.
+    blocks: [ct-security-posture]
+    raised_by: security-routine-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-033
+    type: UNBLOCK
+    title: "Local D:\ security housekeeping — NEW-95 root runbook + dead CSV + legacy rotation backlog (local-only, no repo)"
+    detail: >
+      security-review-2026-07-17 local-only items (cannot be GitHub issues): (1) move
+      D:\SECRETS_REMEDIATION_RUNBOOK_2026-06-30.md into D:\Secrets\ or delete post-rotation — it
+      discloses an AWS key ID + the NEW-22 pw prefix in cleartext at D:\ root; (2) deactivate→delete
+      idle CT IAM key AKIAXEFUNKAE…AYVV per that runbook (do NOT touch live …CXMIJ567; the orryx.ec2
+      key doubles as the local operator AWS CLI credential — replace locally BEFORE deleting);
+      (3) delete dead-key CSV D:\Secrets\pillarworks-bedrock_accessKeys.csv (IAM user removed
+      2026-06-28, NEW-15 scrub complete); (4) legacy HEAD-clean rotation backlog NEW-05/06/07/01
+      (AWS+SES SMTP pw, RDS master pw, 2nd staging-db pw, admin_seed_token) — rotate as batch.
+    blocks: []
+    raised_by: security-routine-2026-07-17
+    status: pending
+    age_days: 0
