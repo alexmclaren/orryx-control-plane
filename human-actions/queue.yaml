@@ -1153,3 +1153,35 @@ items:
     raised_by: mvp-delivery-followup-2026-07-17
     status: pending
     age_days: 0
+
+  - id: HA-028
+    type: UNBLOCK
+    title: "Rotate the outstanding credentials behind ORC-01 — audit resolved, rotation did NOT"
+    detail: >
+      ORC-01 was marked resolved off the 2026-07-15 audit (HEAD clean, defenses active) but the
+      rotations themselves remain outstanding per security-review-2026-07-16 (FRESH): NEW-22
+      prod PHI-DB master pw (ctadmin@clinical-trials-db-pilot, re-verified LIVE @ 488a1b2,
+      ~4.9mo in history), NEW-23 AACT pw (runbook docs/security/AACT_SECRET_ROTATION_RUNBOOK.md),
+      NEW-09 Pinecone+OpenAI+GoogleOAuth (~100d). NEW-22 is a release blocker for Clinical.Trials
+      (RC-02, release-readiness-2026-07-17). All cloud-side/vendor-console actions; no code change.
+      Do NOT re-open history-scrub — dropped per DEC-ESC-CEO-027.
+    blocks: [ct-security-posture, ct-release]
+    raised_by: release-changelog-followup-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-029
+    type: JUDGE
+    title: "Adjudicate NEW-88 conflict — queue says boundary SECURE (07-15 audit), security-review 07-16 still holds it open"
+    detail: >
+      The NEW-88 queue entry was resolved 2026-07-15 claiming the MatchResult IDOR boundary is
+      SECURE (scope_patient_query_to_user fail-closed, RBAC, audit trail verified in code). But
+      security-review-2026-07-16 — one day FRESHER — still carries NEW-88 open as "static-reviewed
+      only, REQUIRES HUMAN REVIEW" and it remains a CT release blocker (RC-02). One of the two is
+      stale. Human to either (a) confirm the 07-15 audit satisfies the author's REQUIRES-HUMAN-REVIEW
+      tag and instruct security-routine to close NEW-88, or (b) rule the audit insufficient and
+      re-open this queue entry. Related: #147/#148 PHI-audit PRs also carry the same review tag.
+    blocks: [ct-phi-compliance, ct-release]
+    raised_by: release-changelog-followup-2026-07-17
+    status: pending
+    age_days: 0
