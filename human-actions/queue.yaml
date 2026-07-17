@@ -1315,7 +1315,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-031
+  - id: HA-038
     type: UNBLOCK
     title: "Rotate prod Google OAuth client secret (LIVE-VERIFIED unrotated ~6mo) — NEW-09 resolution overstated"
     detail: >
@@ -1326,7 +1326,10 @@ items:
       vendor console): rotate the client secret in Google Cloud Console (Triora OAuth client), update the
       SM secret value, restart consumers. Second leg of the genuine credential residual after NEW-12
       (devops-2026-07-12 / eod-2026-07-12 EOD-01); capability-benchmark residual tripwire re-fires
-      2026-07-21 if NEW-12 + this are still open.
+      2026-07-21 if NEW-12 + this are still open. Overlaps HA-036's bundled NEW-09 line — this entry
+      is the live-SM-verified prod-secret leg specifically (HA-036 also re-carries the NEW-22 phantom;
+      see HA-031/AI-45 RF-13b). NOTE: queue ID space collided 2026-07-17 (HA-030/031/032/033/034/035/036
+      each duplicated by concurrent writers) — renumbered from HA-031 to HA-038; a dedup pass is owed.
     blocks: [triora-security-posture]
     raised_by: frontier-architecture-session-2026-07-17
     status: pending
@@ -1571,5 +1574,44 @@ items:
       failure-analysis-2026-07-17 FA-03; eod-summary-2026-07-17 Caveats.
     blocks: [security-evidence-integrity]
     raised_by: failure-analysis-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: SR-Q3
+    type: UNBLOCK
+    title: "Execute secret-rotation batch SR-02..SR-13 — operator step pack ready"
+    detail: >
+      Human-gated rotation batch per D:\state\secret-rotation-ledger.json /
+      secret-rotation-2026-07-13.md. OVERDUE 18d: SR-02 AACT pw, SR-03 vendor trio
+      (mostly done — 4 console revocations left incl. the HA-031 Google OAuth secret),
+      SR-04 n8n token (pairs with ORC-30; redaction PR in flight, pillarworks #361).
+      DUE 2026-07-18: SR-05 Temporal, SR-06 Cloudflare token (re-scope trap — see pack),
+      SR-07 Resend (may be confirm-and-close), SR-08 JWT signing secret, SR-09 Jina x2,
+      SR-10 staging-db, SR-11 admin_seed_token, SR-12 AWS key+SES SMTP, SR-13 RDS pw.
+      STEP-BY-STEP OPERATOR PACK (exact clicks + commands + ordering traps):
+      D:\state\secret-rotation-operator-steps-2026-07-17.md. One 60-90min sitting
+      clears the board. Founder closes each SR-NN with Claude afterwards; the
+      tracker never self-closes. Supersedes: nothing (prior SR-Q1/Q2 dropped in
+      2026-07-17 queue rewrite; SR-Q2/MC-gate confirmed ALREADY DONE via ORC-23,
+      GitHub MC issue #2 closed as verified-complete).
+    blocks: [secret-rotation-sla]
+    raised_by: secret-rotation-tracker-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-044
+    type: APPROVE
+    title: "Batch re-bump both orryx-brain submodule gitlinks after the 07-16 merge trains (ESC-009 / DP-08)"
+    detail: >
+      cto-review-2026-07-17 live re-derivation: brain origin/main gitlinks are BOTH behind after
+      the 2026-07-16 dependabot merge trains — pillarworks-build-mvp @ e3f1d11 = 33 behind
+      origin/main 92b4e0fc; repos/orryx-mcp-gateway @ b6f53e5 = 12 behind 8a05316. This is
+      merge-velocity lag, not neglect (the bump mechanism was proven working 07-15). Action:
+      one batch re-bump of BOTH gitlinks AFTER the trains settle — do NOT chase per-commit;
+      `git cat-file -t` each target SHA first; do NOT local-checkout ahead; parent-pointer push
+      is human-approved (r11-owned). Note: mcp-gateway is the PROTECTED live submodule — pointer
+      bump only, never any destructive action.
+    blocks: [submodule-coherence]
+    raised_by: daily-planner-2026-07-17
     status: pending
     age_days: 0
