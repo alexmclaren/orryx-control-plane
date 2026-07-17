@@ -1315,7 +1315,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-038
+  - id: HA-045
     type: UNBLOCK
     title: "Rotate prod Google OAuth client secret (LIVE-VERIFIED unrotated ~6mo) — NEW-09 resolution overstated"
     detail: >
@@ -1337,7 +1337,7 @@ items:
 
   # --- MOP-2026-07-17 follow-ups (source: master-operating-plan-2026-07-17.md; residuals of closed ORC rows + new streams) ---
 
-  - id: HA-028
+  - id: HA-046
     type: UNBLOCK
     title: "Push unpushed go-live orchestration config (ORC-37 / DO-38)"
     detail: >
@@ -1351,7 +1351,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-029
+  - id: HA-047
     type: UNBLOCK
     title: "CT rollback: one ENV=pilot smoke-run closes the ~5.5mo liability (ORC-33 residual)"
     detail: >
@@ -1366,7 +1366,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-030
+  - id: HA-048
     type: UNBLOCK
     title: "CT health-check: verify first scheduled green + re-run provision-oidc-roles.sh (ORC-19 residual)"
     detail: >
@@ -1395,7 +1395,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-032
+  - id: HA-049
     type: UNBLOCK
     title: "Run orryx-mcp-gateway deploy.sh — merged security prod-dep bumps not deployed (DO-39)"
     detail: >
@@ -1407,7 +1407,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-033
+  - id: HA-050
     type: UNBLOCK
     title: "SEQ-5: rescue CT stashes {6},{7} BEFORE further stripe-go-live source work (GH-01)"
     detail: >
@@ -1422,7 +1422,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-034
+  - id: HA-051
     type: UNBLOCK
     title: "Fix pillarworks issue #317 — onboarding wizard upload does not persist (funnel-blocking)"
     detail: >
@@ -1436,7 +1436,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-035
+  - id: HA-052
     type: JUDGE
     title: "Doc/environment integrity triage: D:\\Orryx clobber + CSV-export overclaim (ORC-38)"
     detail: >
@@ -1453,7 +1453,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-036
+  - id: HA-053
     type: APPROVE
     title: "Founder sign-off on Clinical.Trials PR #142 (site_id CASCADE->SET-NULL PHI-loss fix)"
     detail: >
@@ -1467,7 +1467,7 @@ items:
     age_days: 0
 
 
-  - id: HA-045
+  - id: HA-054
     type: UNBLOCK
     title: "CT credential rotations NOT done — NEW-22 RDS ctadmin (~5.0mo) + NEW-23 AACT + NEW-09 Pinecone/OpenAI (GitHub issue Clinical_trials#160)"
     detail: >
@@ -1482,7 +1482,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-046
+  - id: HA-055
     type: UNBLOCK
     title: "Local D:\ security housekeeping — NEW-95 root runbook + dead CSV + legacy rotation backlog (local-only, no repo)"
     detail: >
@@ -1501,7 +1501,7 @@ items:
 
   # --- failure-analysis follow-up 2026-07-17 (source: failure-analysis-2026-07-17.md) ---
 
-  - id: HA-045
+  - id: HA-056
     type: APPROVE
     title: "RF-16: add mechanical SKU-launch gate to ceo-routine + release-readiness (FA-27)"
     detail: >
@@ -1522,7 +1522,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-046
+  - id: HA-057
     type: APPROVE
     title: "RF-10b rollout: copy the proven re-fire-on-landing clause into engineering / approval-governance / ceo SKILL.md (FA-26)"
     detail: >
@@ -1542,7 +1542,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-047
+  - id: HA-058
     type: APPROVE
     title: "failure-analysis-routine SKILL.md: window-position-from-exit-log pre-check + PENDING-adjudication rule"
     detail: >
