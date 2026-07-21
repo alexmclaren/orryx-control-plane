@@ -2,8 +2,14 @@
 # Read by: orryx-compass (DO NOW / DECIDE TODAY / NEEDS JUDGEMENT columns)
 # type: APPROVE | DECIDE | JUDGE | UNBLOCK
 # column mapping: DECIDE/APPROVE -> DECIDE TODAY ; JUDGE -> NEEDS JUDGEMENT ; UNBLOCK -> DO NOW
+#
+# ID ALLOCATION RULE (HA-062, 2026-07-21 — after the 2026-07-17 six-writer collision):
+# Immediately before appending, re-read this file and take max(HA-NN)+1 — never a
+# number cached earlier in your run. After writing, re-grep your new ID; if it now
+# appears twice, yours is the later occurrence: renumber it to the new max+1.
+# Routines that batch-mint multiple items must allocate all IDs in one read-append cycle.
 version: "1.0"
-last_updated: "2026-07-17"
+last_updated: "2026-07-21"
 
 items:
   - id: HA-001
@@ -983,7 +989,14 @@ items:
     blocks: [fleet-producer-reliability]
     raised_by: autonomous-improvement-2026-07-12
     updated_by: prompt-evolution-2026-07-12 (via session 2026-07-17)
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21 as PE-22 (per detail: PE-18-as-written is a no-op):
+      _shared/PRODUCER_PRECHECK.md §1.2a rewritten — unconditional mtime-based re-stat,
+      glob+mtime recorded in skip_reason, file-exists never SKIP-as-blackout, T00:00:00Z
+      placeholder = mandatory re-check. Consumer-side 1a added to
+      engineering/approval-governance/ceo. RESIDUAL: abbreviated embeds in ~33 other routine
+      SKILL.mds lack the clause — propagation owed to harness-propagation-routine.
     age_days: 0
 
   - id: AI-45
@@ -998,7 +1011,12 @@ items:
       Edit target: scheduled-tasks/security-routine/SKILL.md Machine-Handoff emit rules.
     blocks: [evidence-integrity]
     raised_by: autonomous-improvement-2026-07-12
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21: Credential Live-State Gate added to security-routine SKILL.md
+      (canonical + live scheduled-tasks copy) — mechanical pre-report gate w/
+      verified_method+timestamp, UNVERIFIED fallback, Machine-Handoff emit gate, constraints
+      carve-out for read-only live checks.
     age_days: 0
 
   - id: AI-51
@@ -1028,7 +1046,10 @@ items:
       prompt-evolution-2026-07-12.md PE-23 (also FA-25 / AI-52).
     blocks: [evidence-integrity]
     raised_by: prompt-evolution-2026-07-12 (via session 2026-07-17)
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21: Negative-Escalation Guard (re-stat live artifact before minting any
+      negative escalation; QA-90 cited) in qa-routine, canonical + live.
     age_days: 0
 
   - id: PE-21
@@ -1047,7 +1068,11 @@ items:
       If the check is still red, DO-36's closure is itself the PE-21 failure mode.
     blocks: [evidence-integrity]
     raised_by: prompt-evolution-2026-07-12 (via session 2026-07-17)
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21: validate-fix-against-live-artifact (PR #139 cited) + IaC merge!=apply
+      guards in devops-routine, canonical + live. DO-36 sub-item: no DO-36 reference exists in
+      the SKILL.md; DO-36 CLOSED HARD 2026-07-20 (3 scheduled greens) — nothing to annotate.
     age_days: 0
 
   - id: HA-035
@@ -1082,7 +1107,11 @@ items:
       2026-06-30 (OK on odd week) and 2026-07-12 (SKIP logged "ISO week 29" on an even week).
     blocks: [innovation-backlog-cadence]
     raised_by: innovation-backlog-run-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Fixed 2026-07-21: ISO-week %V parity gate replaced with date-anchored fortnight gate
+      (floor((today-2026-07-06)/7)%2==0), runtime-verified incl. the wrongly-skipped 07-12.
+      Canonical aligned with already-fixed live copy.
     age_days: 0
 
   - id: AI-53
@@ -1095,7 +1124,12 @@ items:
       "UFormat %V" and apply the AI-55 fix pattern wherever found.
     blocks: [fleet-cadence-integrity]
     raised_by: innovation-backlog-run-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Audited 2026-07-21: all 46 canonical + 54 live SKILL.mds swept. Same bug fixed in
+      capability-benchmarking, frontier-architecture, autonomous-improvement (canonical; live
+      copies already fixed). competitive-intelligence already date-anchored. Zero buggy %V
+      gates remain in either tree.
     age_days: 0
 
   - id: AI-54
@@ -1110,7 +1144,11 @@ items:
       treat known aliases as equal for historical rows.
     blocks: [fleet-health-accounting]
     raised_by: innovation-backlog-run-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21: routine_id MUST equal scheduled-task dir name (PRODUCER_PRECHECK.md
+      §4); innovation-backlog-routine emit rule hardcodes canonical id w/ alias note;
+      fleet-health consumer treats 'innovation-backlog' alias as equal. Canonical + live.
     age_days: 0
 
   # --- mvp-delivery follow-up 2026-07-17 (source: mvp-progress-2026-07-13 + Stripe preflight 2026-07-15) ---
@@ -1205,7 +1243,11 @@ items:
       EOD-42.
     blocks: [security-evidence-integrity, AI-45]
     raised_by: eod-distillation-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21 with AI-45: RF-13b rotation-closure cross-check (provider last-rotated
+      timestamp MUST be >= claimed rotation date before accepting closure) in
+      security-routine, canonical + live.
     age_days: 0
 
   - id: HA-032
@@ -1250,6 +1292,15 @@ items:
     blocks: [credential-incident-closure]
     raised_by: eod-distillation-2026-07-17
     status: pending
+    adjudication_prep: >
+      PREPARED RULING 2026-07-21 (awaiting founder ratification): DECISIONS.md 07-07 records
+      DEC-ESC-CEO-027 verbatim as 'History-scrub of the dead value [NEW-22] is DROPPED as
+      accepted-risk' — scope is NEW-22-only and scrub-only. It does NOT cover NEW-23/NEW-09
+      vendor-console ROTATIONS (07-19 lead confirms them still owed, ~30d/~103d over-SLA).
+      Recommended ruling: (a) devops/cto correct for NEW-22 scrub; (b) security-review correct
+      that NEW-23/NEW-09 rotations remain OWED (= HA-036/HA-045/HA-054); (c) NEW-23/NEW-09
+      history-scrub is UNDECIDED — founder to either extend DEC-027 accepted-risk to those
+      values or leave owed after rotation.
     age_days: 0
 
   - id: HA-027
@@ -1297,6 +1348,14 @@ items:
     blocks: [ct-phi-compliance, ct-release]
     raised_by: release-changelog-followup-2026-07-17
     status: pending
+    adjudication_prep: >
+      PREPARED RECOMMENDATION 2026-07-21 (PHI authz — human review REQUIRED by policy, cannot
+      be auto-closed): the 07-15 audit verified scope_patient_query_to_user fail-closed + RBAC
+      + audit trail in code, which addresses the finding's substance; the 07-16
+      security-review holds it open solely on the REQUIRES-HUMAN-REVIEW tag. Recommended:
+      option (a) — founder confirms the 07-15 audit satisfies the tag, security-routine closes
+      NEW-88 citing it. #147/#148 carry the same tag and should be reviewed in the same
+      sitting.
     age_days: 0
 
   - id: HA-030
@@ -1382,7 +1441,7 @@ items:
     status: pending
     age_days: 0
 
-  - id: HA-031
+  - id: ORC17-04
     type: UNBLOCK
     title: "Trigger pillarworks RLS staging apply (#351) -> unblocks 15d-old #266"
     detail: >
@@ -1419,7 +1478,15 @@ items:
       Sequencing rule: no further CT Stripe source work until {6},{7} are rescued.
     blocks: [ct-stripe-golive-source-safety]
     raised_by: orchestration-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Executed 2026-07-21: full bundle backup at
+      D:\Archive\clinical-trials-full-backup-2026-07-21.bundle; stashes {6},{7}
+      (stripe-billing) AND {1},{2} (PHI-authz) pinned to rescue/* branches via additive git
+      branch on the stash commits — no checkout switch, stashes intact, content on named refs.
+      Pillarworks GH-02: stash@{11} (tmp-mp-cleanup capture) pinned to
+      rescue/stash11-828-file-capture; remaining 17 pillarworks stashes left for git-hygiene
+      routine. CT Stripe source work UNBLOCKED.
     age_days: 0
 
   - id: HA-051
@@ -1519,7 +1586,12 @@ items:
       Source: failure-analysis-2026-07-17 FA-27/RF-16; ceo-summary-2026-07-17 ESC-CEO-037.
     blocks: [pillarworks-first-revenue, launch-gating]
     raised_by: failure-analysis-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21: SKU-Launch Gate (BLOCKING — test charge w/ entitlement grant + live
+      price objects + payouts enabled, else NOT LAUNCHED + recommend disabling purchase path)
+      in ceo-routine AND release-changelog-routine (the de-facto release-readiness prompt; no
+      release-readiness dir exists). Canonical + live.
     age_days: 0
 
   - id: HA-057
@@ -1539,7 +1611,13 @@ items:
       failure-analysis-2026-07-17 FA-26/RF-10b; eod-summary-2026-07-17 EOD-17.
     blocks: [fleet-producer-reliability, AI-46]
     raised_by: failure-analysis-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21: re-fire-on-landing step 1b (SKIP on PRODUCER_NOT_YET_FIRED =>
+      re-check same day, run fully when producer lands, supersede the SKIP exit row, never
+      re-time windows) in engineering, approval-governance, ceo SKILL.mds. No prior written
+      clause existed anywhere — authored from HA-057 detail + memory-consolidation 07-17
+      precedent. Canonical + live.
     age_days: 0
 
   - id: HA-058
@@ -1556,10 +1634,14 @@ items:
       failure-analysis-2026-07-17 Routine Improvements (self-note).
     blocks: []
     raised_by: failure-analysis-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      Landed 2026-07-21: Window-Position & Adjudication Pre-check (window position from
+      fleet-exit-log.jsonl not wall clock; PENDING-adjudication rule w/ expected timestamp) in
+      failure-analysis-routine, canonical + live.
     age_days: 0
 
-  - id: HA-048
+  - id: HA-059
     type: JUDGE
     title: "Reconcile DEC-ESC-CEO-027 scrub scope: NEW-22-only vs whole CT credential cluster"
     detail: >
@@ -1575,6 +1657,8 @@ items:
     blocks: [security-evidence-integrity]
     raised_by: failure-analysis-2026-07-17
     status: pending
+    adjudication_prep: >
+      Duplicate of HA-034 — see HA-034 prepared ruling 2026-07-21.
     age_days: 0
 
   - id: SR-Q3
@@ -1614,4 +1698,71 @@ items:
     blocks: [submodule-coherence]
     raised_by: daily-planner-2026-07-17
     status: pending
+    age_days: 0
+
+  # --- execution-safety follow-up 2026-07-17 (source: execution-safety-2026-07-17.md ES-02/ES-04; + ID-collision repair) ---
+
+  - id: HA-060
+    type: UNBLOCK
+    title: "pillarworks QA-04: land the FE type-error burn-down then remove both build masks (ES-02)"
+    detail: >
+      196 error-TS lines / 63 files on the Stripe-live prod frontend, masked by
+      ignoreBuildErrors:true (next.config.js:29) + ignoreDuringBuilds:true (:24) —
+      the build cannot catch FE type regressions on the conversion path. Flat 3rd
+      cycle; fix branch fix/qa-04-fe-ts-errors exists cut at origin/main 92b4e0fc
+      with 0 fixes committed. Action (engineering, human-planned batch ENG-17/DP-11):
+      burn down live-path-first (auth register/reset InputProps, ApiError.detail,
+      estimation null-guards, exportBOQ.ts module decls, CustomerReviewPanelProps),
+      then remove BOTH masks. Execution-safety gate ES-02 blocks autonomous
+      FE-touching work on pillarworks until done. Source: qa-summary-2026-07-17
+      QA-04; execution-safety-2026-07-17 ES-02.
+    blocks: [pillarworks-fe-type-safety, stripe-live-regression-net]
+    raised_by: execution-safety-followup-2026-07-17
+    status: pending
+    age_days: 0
+
+  - id: HA-061
+    type: JUDGE
+    title: "pillarworks AG-61: verify + reset local main (2 ahead w/ dup-#332 billing fix) — DO NOT push blindly"
+    detail: >
+      Local pillarworks main is 2 commits ahead of origin with an unpushed
+      fix(billing) 1b2a0140 that DUPLICATES already-merged PR #332 (5c4a8452,
+      identical message + fix) plus merge commit 7ea73b0c. origin/main is canonical
+      and correct. A blind push re-lands a duplicate billing-enum fix on the live
+      money path. Action (human): confirm 1b2a0140 is fully redundant vs #332, then
+      reset local main to origin/main. Concurrent-checkout hazard class
+      (reference_pillarworks_concurrent_checkout_hazard). Source:
+      approval-summary-2026-07-16 AG-61; execution-safety-2026-07-17 ES-04.
+    blocks: [pillarworks-local-main-safety]
+    raised_by: execution-safety-followup-2026-07-17
+    status: resolved
+    resolution: >
+      Verified live 2026-07-21 after git fetch: local pillarworks main == origin/main (ahead
+      0, behind 0). The 2-ahead dup-1b2a0140 state no longer exists — already converged. No
+      reset needed, nothing pushed.
+    age_days: 1
+
+  - id: HA-062
+    type: JUDGE
+    title: "queue.yaml ID-collision repair 2026-07-17 — confirm renumbering + fix the multi-writer allocation"
+    detail: >
+      Six concurrent writers (eod-distillation, orchestration, security-routine,
+      failure-analysis, release-changelog-followup, frontier-architecture) minted
+      overlapping HA IDs on 2026-07-17 (HA-028/029/030/032/033/034/035/036/037/038/039
+      each used 2-3 times). Repaired 2026-07-17 by execution-safety follow-up:
+      later occurrences renumbered to HA-045..HA-059 (first occurrence of each ID
+      kept; content untouched; backup at queue.yaml.bak-2026-07-17-esr). Human/
+      governance: (a) spot-check the renumbered entries still read correctly,
+      (b) fix the allocation mechanism — writers must re-read max(HA-NN) immediately
+      before appending, or a single allocator (orchestration) should own ID minting.
+      This is the standing queue.yaml multi-writer trap escalating from theory to
+      corruption.
+    blocks: [queue-integrity]
+    raised_by: execution-safety-followup-2026-07-17
+    status: resolved
+    resolution: >
+      Verified 2026-07-21: zero duplicate IDs post-renumbering (full-file uniq -d sweep);
+      renumbered HA-045..HA-059 entries read correctly. Allocation mechanism fixed: ID
+      ALLOCATION RULE added to queue.yaml header (re-read max(HA-NN) immediately before append
+      + post-write self-check + batch-mint in one cycle).
     age_days: 0
