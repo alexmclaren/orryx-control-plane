@@ -11,7 +11,7 @@
 | HA-005 | Approve go-live (after remediation PR merges) | — | the whole launch |
 | F-a | Booking fallback: Formspree / monitored mailto / provision Cal.com now (HA-001 now resolved → Cal.com is unblocked) | mailto to one address | S-fix.3 |
 | F-b | One contact email site-wide (resolve `@orryx.com.au` vs `orryx.dev`) | founder-supplied | S-fix.5 |
-| F-c | Verify ACN 696 212 889 registered (ASIC) | hold legal pages | S-fix.5, go-live |
+| F-c | ~~Verify ACN 696 212 889 registered (ASIC)~~ **VERIFIED 2026-07-21** — ORRYX PTY LTD, ABN 46 696 212 889, ACN 696 212 889, active 05 Apr 2026, QLD 4215, **not GST-registered**. Source: abr.business.gov.au. Legal pages may cite it. Note: Orryx is a SEPARATE company from the Pillarworks/Triora entity (A.C.N. 700 258 804 Pty Ltd, ABN 61 700 258 804). | ~~hold legal pages~~ CLEARED | S-fix.5, go-live |
 | F-d | Guarantee terms (refund window + credit validity) | "actionable plan in 30 days or refund; credit valid 12 mo" | S-fix.5 |
 | F-e | KPI metrics: delete vs relabel "illustrative" | delete | S-fix.2 |
 | R1–R4 | DR-2026-001 vs Phase-1 reconciliation (Assessment $1,500 vs Roadmap $490; published catalog pricing vs advisory-only; foundation cap 2–3 vs 5–8; ICP beachhead breadth) | see REPOSITIONING_PLAN §10 recommendations | Sprint 2 copy |
