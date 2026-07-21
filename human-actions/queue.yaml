@@ -1290,7 +1290,16 @@ items:
       devops-summary-2026-07-17 DO-39; qa-summary-2026-07-17 action #2.
     blocks: [mcp-gateway-supply-chain]
     raised_by: eod-distillation-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      DEPLOYED 2026-07-21: deploy/production/deploy.sh run from fresh origin/main (carries
+      merged helmet 8.3.0 / ws 8.21.1 bumps). Docker build + ECR push + new task-def revision
+      + ECS force-new-deployment; services-stable wait passed; live health check 200 at
+      https://mcp.orryx.dev/health. Prior task-def revision retained for rollback per standing
+      practice. NOTE: local Docker Desktop needed a fix first — systemic broken-AF_UNIX-socket
+      state (dockerInference + secrets-engine engine.sock unremovable, ERROR_INVALID_NAME)
+      after 0x40010004 logoff kills; cure was wsl --shutdown + rename stale socket dirs. If it
+      recurs, reboot clears it.
     age_days: 1
 
   - id: HA-034
@@ -1527,7 +1536,16 @@ items:
       bumps. Repo is PROTECTED (live active submodule — never a teardown candidate).
     blocks: []
     raised_by: orchestration-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      DEPLOYED 2026-07-21: deploy/production/deploy.sh run from fresh origin/main (carries
+      merged helmet 8.3.0 / ws 8.21.1 bumps). Docker build + ECR push + new task-def revision
+      + ECS force-new-deployment; services-stable wait passed; live health check 200 at
+      https://mcp.orryx.dev/health. Prior task-def revision retained for rollback per standing
+      practice. NOTE: local Docker Desktop needed a fix first — systemic broken-AF_UNIX-socket
+      state (dockerInference + secrets-engine engine.sock unremovable, ERROR_INVALID_NAME)
+      after 0x40010004 logoff kills; cure was wsl --shutdown + rename stale socket dirs. If it
+      recurs, reboot clears it.
     age_days: 0
 
   - id: HA-050
