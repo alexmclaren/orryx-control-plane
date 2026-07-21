@@ -1028,7 +1028,15 @@ items:
       FA-25, phantom 4th week) are NOT persisted until it re-fires or the next run catches up.
     blocks: [compound-learning-loop]
     raised_by: autonomous-improvement-2026-07-12
-    status: pending
+    status: resolved
+    resolution: >
+      CLOSED already-remediated 2026-07-21: verification pass found the 07-12 consolidation
+      WAS persisted — the 00:00Z SKIP was superseded by the routine's own 11:05Z catch-up (run
+      26). Evidence on all 5 surfaces: DECISIONS.md 705-723, RISKS.md 765-781, sqlite
+      consolidation_run + learnings 183/184/185 + RR-14, memory-consolidation-2026-07-12.md
+      report, both exit-log rows. No back-fill written (would duplicate history / re-assert
+      superseded states). LESSON: an exit-log SKIP row is not proof of loss — check for a
+      superseding same-day OK row before minting a back-fill task.
     age_days: 0
 
   - id: PE-23
@@ -1192,7 +1200,15 @@ items:
       devops-summary-2026-07-17 DO-03.
     blocks: [ct-ops-resilience, ct-mvp-001]
     raised_by: eod-distillation-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      EXECUTED GREEN 2026-07-21: workflow_dispatch run 29809493771 (environment=pilot, reason
+      logged) concluded SUCCESS with ALL jobs green — Validate Rollback Request / Get Task
+      Definitions / Execute Rollback / Verify Rollback Health / Notify Rollback Result
+      (verified via gh run view --json jobs, not --log-failed). First green Manual Rollback in
+      workflow lifetime (prior runs 2026-01-31 + 2026-07-15 both failed). Closes the ~5.5mo
+      DO-03/ORC-33/EOD-03 liability; ct-mvp-001 'runs green once' acceptance (HA-027) now has
+      its evidence run.
     age_days: 0
 
   - id: HA-029
@@ -1384,7 +1400,22 @@ items:
       issue #187 (free S3 gateway endpoint on the orryx-mcp VPC — no approval gate, engineering-only).
     blocks: [finops-fo02, finops-fo03]
     raised_by: finops-routine-2026-07-13
-    status: pending
+    status: resolved
+    resolution: >
+      EXECUTED 2026-07-21: PR #115 (orryx-brain, closed w/ deleted base) revived as PR #191
+      from the identical branch, CI green, squash-merged a25a3c1. Live pre-verification: NAT
+      nat-020b1b6e38fcc986a + EIP eipalloc-017edc7a2cecf9c1c orphaned (VPC
+      vpc-033afe645e8b82a30: 0 instances/LBs; 30d CloudWatch ActiveConnectionCount=0,
+      BytesOut=0); NOT the Triora VPC (its S3 endpoint vpce-0146684cdeee460b7 in
+      vpc-0b52c3d2a513e122e untouched). Terraform import+destroy applied: exactly 16 resources
+      (VPC/IGW/4 subnets/2 RTs/4 assocs/4 SGs); NAT+EIP via direct CLI due to provider
+      public-NAT import bug. Post-apply: VPC/EIP NotFound, NAT deleted. Savings ~$36.65/mo.
+      RESIDUALS: (a) module terraform/teardown-orphan-ap2 is spent — needs a one-line
+      EXECUTED-2026-07-21 README note; (b) dead backend artifacts
+      (orryx-terraform-locks-ap-southeast-2 DynamoDB +
+      s3://orryx-tfstate-490004631560-ap-southeast-2) remain out-of-scope per
+      orphaned-tfstate-backends decommission gate; (c) bootstrap/ + locks-ap2-billing/ modules
+      merged but NOT applied (operator-gated).
     age_days: 0
 
   - id: HA-045
@@ -1435,7 +1466,15 @@ items:
       ~5 minutes of operator time.
     blocks: [ct-ops-resilience, mvp-scope-truth]
     raised_by: orchestration-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      EXECUTED GREEN 2026-07-21: workflow_dispatch run 29809493771 (environment=pilot, reason
+      logged) concluded SUCCESS with ALL jobs green — Validate Rollback Request / Get Task
+      Definitions / Execute Rollback / Verify Rollback Health / Notify Rollback Result
+      (verified via gh run view --json jobs, not --log-failed). First green Manual Rollback in
+      workflow lifetime (prior runs 2026-01-31 + 2026-07-15 both failed). Closes the ~5.5mo
+      DO-03/ORC-33/EOD-03 liability; ct-mvp-001 'runs green once' acceptance (HA-027) now has
+      its evidence run.
     age_days: 0
 
   - id: HA-048
@@ -1464,7 +1503,19 @@ items:
       Keep strictly separate from the Stripe LIVE work.
     blocks: [pillarworks-rls-fail-closed]
     raised_by: orchestration-2026-07-17
-    status: pending
+    status: resolved
+    resolution: >
+      EXECUTED 2026-07-21 — result NO-GO (justified): #351 was already merged; bridge applied
+      per RUNME (temp public endpoint + /32 SG rule, no peering so no CIDR risk), migration
+      applied cleanly (staging at alembic head rls_001: 74 tables ENABLE+FORCE, 62 policies,
+      left applied per runbook), bridge FULLY reverted (SG rule sgr-0d15cd4c00321c8fa revoked,
+      RDS private/available, cluster resources deleted, repo clean on main). BUT isolation
+      proof FAILED: RDS PostgreSQL 15.17 does not honor FORCE RLS for the table owner (minimal
+      proof: USING(false) policy, owner still sees all rows; non-owner probe correctly
+      filtered). App connects as owner pillarworks_admin => #266 RLS would be a SILENT NO-OP
+      in prod. #266 gate NOT cleared — stays held. Also found: verify script uses
+      hashed_password, real column is password_hash. Follow-up minted as HA-063. Evidence logs
+      in session scratchpad rls-staging-apply-run{1,2}-20260721.log.
     age_days: 0
 
   - id: HA-049
@@ -1780,4 +1831,21 @@ items:
       renumbered HA-045..HA-059 entries read correctly. Allocation mechanism fixed: ID
       ALLOCATION RULE added to queue.yaml header (re-read max(HA-NN) immediately before append
       + post-write self-check + batch-mint in one cycle).
+    age_days: 0
+
+  - id: HA-063
+    type: JUDGE
+    title: "RLS prerequisite: non-owner app DB role — FORCE RLS is a no-op for owner on staging RDS pg15.17 (blocks #266)"
+    detail: >
+      2026-07-21 staging apply (ORC17-04) proved the #266 design premise false: the engine does
+      not enforce FORCE ROW LEVEL SECURITY against the table owner, and the app connects as
+      owner pillarworks_admin. Non-owner probe enforced correctly. Prerequisite before #266 can
+      merge: mint a non-owner application role (no BYPASSRLS), grant table privileges, point the
+      app DSN at it (staging first, then prod pattern) — credential mint is founder-gated per
+      secret policy (AWS Secrets Manager canonical). Also fix the #266 verify script column bug
+      (hashed_password -> password_hash) and recount evidence asserts (74 live RLS tables vs
+      script's 73). Staging DB alembic head now rls_001 (ahead of main chain) — expected.
+    blocks: [pillarworks-rls, pr-266]
+    raised_by: decision-hierarchy-execution-2026-07-21
+    status: pending
     age_days: 0
