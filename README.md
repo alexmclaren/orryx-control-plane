@@ -20,6 +20,7 @@ The control plane orchestrates work across all Orryx repositories:
 - `/reports/` - Execution reports and audits
 - `/decisions/` - Architecture Decision Records
 - `/context/` - Product context cache (token optimization)
+- `/human-actions/` - Durable human-action ledger (`queue.yaml`)
 - `/scripts/` - Automation and tooling
 
 ## Quick Start
@@ -34,9 +35,9 @@ python scripts/task-management/create-task.py
 python scripts/execution/orchestrate.py execute TP-2026-001
 ```
 
-### Generate daily report
+### Rebuild the product context cache
 ```bash
-python scripts/reporting/daily-report.py
+python scripts/context/build-context.py
 ```
 
 ## Principles
