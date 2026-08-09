@@ -1,0 +1,50 @@
+name: executor
+
+# Scoped to the executor package. The rest of this repository is YAML records
+# and documents with no build, so a repo-wide workflow would only ever be noise.
+on:
+  push:
+    paths:
+      - 'executor/**'
+      - '.github/workflows/executor-ci.yml'
+  pull_request:
+    paths:
+      - 'executor/**'
+      - '.github/workflows/executor-ci.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: executor
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # No install step: the package has zero dependencies, by design. If a
+      # lockfile ever appears here, that is a deliberate decision to review,
+      # not a routine change.
+      - name: Assert zero dependencies
+        run: |
+          node -e "
+            const pkg = require('./package.json');
+            const deps = Object.keys(pkg.dependencies ?? {});
+            const dev = Object.keys(pkg.devDependencies ?? {});
+            if (deps.length || dev.length) {
+              console.error('executor must stay dependency-free; found:', [...deps, ...dev]);
+              process.exit(1);
+            }
+          "
+
+      - name: Test
+        run: node --test
+
+      - name: Coverage
+        run: node --test --experimental-test-coverage

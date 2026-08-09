@@ -1,0 +1,17 @@
+{
+  "name": "@orryx/executor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Provider-neutral executor interface for the Orryx control plane. Flow-equivalent governance stays here; harnesses (Claude Code, Prime Agent, ...) are swappable adapters that cannot self-certify.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/",
+    "test:coverage": "node --test --experimental-test-coverage test/"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
