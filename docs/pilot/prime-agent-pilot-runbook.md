@@ -12,16 +12,19 @@ afternoon. If it cannot be made to work at this size, it will not work larger.
 
 ## 0. Prerequisites — all must hold before step 1
 
-> **Machine scope.** The P1 state below was probed on `DESKTOP-3KRD96T`
-> (repos at `E:\Orryx\repos`). The estate also runs on `DESKTOP-V0RDMNK`
-> (repos at `D:\`, per `orryx-state/align-machine.ps1`). **P1 is a property of
-> the machine, not of the estate — re-probe it wherever you intend to run the
-> pilot.** §2 gives the three commands. If the target machine already has a
-> usable Linux distro, P1 is met there and the pilot can start immediately.
+> **Machine scope.** P1 is a property of the machine, not of the estate —
+> **re-probe it wherever you intend to run the pilot.** §2 gives the test.
+> Probed on `DESKTOP-3KRD96T` (repos at `E:\Orryx\repos`) and on
+> `DESKTOP-V0RDMNK` (repos flat under `D:\`) — both 2026-08-09, both **not met**.
+>
+> **Listing a distro does not mean P1 is met.** An orphaned WSL registration —
+> registry entry present, backing `ext4.vhdx` gone — reports `Stopped`, exactly
+> like a healthy stopped distro. `DESKTOP-V0RDMNK` lists two Ubuntu distros and
+> neither starts. Use the executing test in §2, never `wsl -l -v` alone.
 
-| # | Prerequisite | State on `DESKTOP-3KRD96T`, 2026-08-09 | Owner |
+| # | Prerequisite | State, 2026-08-09 | Owner |
 |---|---|---|---|
-| P1 | A Linux host: WSL2 distro or Docker container | ❌ only `docker-desktop` distro, daemon stopped. **Unknown on `DESKTOP-V0RDMNK`.** | Operator |
+| P1 | A Linux host: WSL2 distro or Docker container | ❌ both machines. `3KRD96T`: only `docker-desktop`, daemon stopped. `V0RDMNK`: `Ubuntu` + `Ubuntu-24.04` listed but **orphaned — backing disk missing, neither starts**; Docker Desktop installed, backing store intact at `D:\Docker\DockerDesktopWSL\main`, daemon stopped. ~30 min of operator work there, either route. | Operator |
 | P2 | A metered Anthropic API key scoped to the pilot, spend cap set | ❌ **human decision — new cost** | Founder |
 | P3 | Pinned Prime Agent release, SHA-256 verified, from `PrimeIntellect-ai` | ❌ | Operator |
 | P4 | Disposable clone — never a primary clone or a worktree of one | ❌ | Operator |
@@ -64,14 +67,36 @@ the R1 ceiling. Enforced by `BudgetLedger`, not by asking the harness nicely.
 ## 2. Environment setup
 
 **Step one on any machine: re-probe P1.** Do not trust the table above — it
-describes `DESKTOP-3KRD96T` on 2026-08-09.
+records two machines on 2026-08-09 and nothing else.
 
 ```powershell
 $env:COMPUTERNAME; wsl -l -v; docker version --format '{{.Server.Version}}'
 ```
 
-A distro other than `docker-desktop` in `STOPPED`/`RUNNING` state, or a Docker
-server version, means P1 is already met — skip the install below.
+That inventories what is *registered*. **It does not establish P1.** Prove the
+host actually runs, by executing in it — a Docker server version, or:
+
+```powershell
+wsl -d <distro> -- uname -sr
+```
+
+**Exit 0 means P1 is met. Anything else means it is not**, whatever `wsl -l -v`
+said. `ERROR_PATH_NOT_FOUND` on `ext4.vhdx` is an orphaned registration: the
+distro is gone and only its registry entry survives. Enumerate the real ones —
+
+```powershell
+Get-ChildItem 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss' | ForEach-Object {
+  $p = Get-ItemProperty $_.PSPath
+  '{0,-20} {1}' -f $p.DistributionName, (Test-Path $p.BasePath.Replace('\\?\',''))
+}
+```
+
+— and `wsl --unregister` any that report `False`. They cannot be repaired, there
+is nothing on them to lose, and leaving them in place reproduces the false pass
+for the next reader.
+
+If P1 is not met, prefer Docker (container isolation, matching §3's
+`ORRYX_EXECUTOR_PRIME_AGENT_ISOLATION=container`) over a bare distro:
 
 ```bash
 wsl --install -d Ubuntu-24.04

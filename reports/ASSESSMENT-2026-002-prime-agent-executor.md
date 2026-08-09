@@ -185,10 +185,22 @@ WSL2 is present but has no usable distro; Docker is installed but stopped. That 
 a half-hour of setup, not a blocker — but it means "integrate Prime Agent" was
 never a same-session possibility, and any claim to have done so would be false.
 
-**[UNRESOLVED]** Whether `DESKTOP-V0RDMNK` has a usable Linux distro or a running
-Docker daemon. If it does, pilot prerequisite P1 is already met there and the
-pilot can start sooner. This single probe is the cheapest way to move the decision
-forward — see §2 of the pilot runbook.
+**[RESOLVED 2026-08-09, probed on `DESKTOP-V0RDMNK`]** ~~Whether `DESKTOP-V0RDMNK`
+has a usable Linux distro or a running Docker daemon.~~ **It does not. P1 is not
+met there either.** `wsl -l -v` lists `Ubuntu` and `Ubuntu-24.04` as `Stopped`,
+but both are orphaned registrations — the `HKCU:\…\Lxss` entries survive and the
+backing `ext4.vhdx` files do not, so both fail to start with
+`ERROR_PATH_NOT_FOUND`. Only `docker-desktop` has an intact backing store
+(`D:\Docker\DockerDesktopWSL\main`); Docker Desktop is installed, daemon stopped.
+
+**This corrects the probe itself, not just its answer.** A listing test cannot
+establish P1: an orphaned distro is indistinguishable from a healthy stopped one
+in `wsl -l -v` output. Runbook §2 has been amended to require an executing test
+(`wsl -d <distro> -- uname -sr`, exit 0). As originally written it returns a
+false pass on `DESKTOP-V0RDMNK`.
+
+P1 remains ~30 minutes of operator work there — Docker Desktop is installed and
+intact — but it is setup, not a met prerequisite.
 
 **[REPO] Migration direction, noted because it affects where this work should
 live.** `orryx-state/audit-unpushed.ps1` (2026-08-05) documents itself as
@@ -381,8 +393,25 @@ no org-level audit trail for anything a harness pushes.
 - Whether its JSON/RPC event vocabulary maps cleanly onto the thirteen event types.
 - Whether `prime-RLM-agent/prime-agent` is a benign mirror or a typosquat.
 - Whether Anthropic's paused subscription change lands, and how.
-- Whether the nine missing hooks were removed deliberately or lost. This changes
-  whether §2 is a gap or a regression, and it needs a human who was there.
+- ~~Whether the nine missing hooks were removed deliberately or lost.~~
+  **[RESOLVED 2026-08-09 — git, not recollection.]** They were **never written**.
+  `git log --all --oneline --diff-filter=A -- '*<name>*'` returns zero commits for
+  all nine names across all refs. `governance.yaml` was authored whole in
+  `013a316` (2026-05-18, "Phase 3 Complete — Seeding scripts, governance config,
+  and templates") and has been modified zero times since; the four hooks that do
+  exist predate it, from Phase 2 (`5aaedcd`). Phase 3 wrote the target state as
+  though it were the current state. **§2 is a gap, not a regression** — nothing
+  was deleted, so nothing is recoverable.
+
+  Two findings enlarge §2 rather than closing it. **No `settings.json` has ever
+  existed in `orryx-standards`** (`git log --all -- '**/settings.json'` → empty),
+  so all thirteen hooks are unregistered — the four that exist are as inert as
+  the nine that do not, invoked only by `npm run` scripts. And
+  `governance.yaml`'s phase vocabulary (`pre_planning`, `pre_debugging`,
+  `post_story`) has no counterpart in Claude Code's tool- and session-scoped
+  event model, so **five of the thirteen trigger points cannot be bound at any
+  effort level**. Scoping in
+  `docs/pilot/PLAN-2026-08-09-executor-boundary-next.md` §A.
 
 ---
 

@@ -326,6 +326,40 @@ nine badly.
 
 ---
 
+## F. D1–D4 are NOT in the ledger, and must not be filed from this branch
+
+They belong in `human-actions/queue.yaml`. **Filing them from this worktree would
+have collided with four already-allocated IDs.**
+
+`queue.yaml`'s ID rule (HA-062, written after the 2026-07-17 six-writer collision)
+says to re-read the file immediately before appending and take `max(HA-NN)+1`. On
+the committed file — which is what this branch and every clone of it sees — that
+gives **HA-063**, so the next ID is HA-064. But the primary clone
+`D:\orryx-control-plane` holds **201 uncommitted lines** adding **HA-064, HA-065,
+HA-066 and HA-067**, unstaged since `last_updated: "2026-08-02"`. Appending here
+would have minted four duplicate IDs.
+
+**HA-062's rule cannot prevent this.** It says re-read *the file*; the live maximum
+was in a file no reader of the branch can see. The rule is sound for concurrent
+writers sharing a checkout and blind to a writer whose work is uncommitted. Worse,
+had this branch also *edited* `queue.yaml`, merging PR #11 would have conflicted
+with — or silently reverted — those 201 lines.
+
+**Operator sequence, in the primary clone, in order:**
+
+1. Review and commit `HA-064`–`HA-067` in `D:\orryx-control-plane`. They have sat
+   unstaged for a week and are invisible to every other reader until they land.
+2. Then append D1–D4 as **HA-068**–**HA-071**, re-reading for the max first.
+
+Not done here, deliberately. Filing four decisions by overwriting four is not an
+improvement on not filing them.
+
+**Generalises beyond this branch:** `max(HA-NN)+1` is only safe if the file is
+clean. The rule should require `git status --porcelain human-actions/queue.yaml`
+to be empty before allocating, and refuse to allocate otherwise.
+
+---
+
 ## E. Constraints honoured
 
 No delegated execution proposed in any PHI repository. No personal subscription in any
