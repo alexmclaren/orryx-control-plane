@@ -22,6 +22,10 @@ The control plane orchestrates work across all Orryx repositories:
 - `/context/` - Product context cache (token optimization)
 - `/human-actions/` - Durable human-action ledger (`queue.yaml`)
 - `/scripts/` - Automation and tooling
+- `/executor/` - Provider-neutral execution boundary: work orders, budgets,
+  evidence manifests, independent adjudication. See
+  [executor/README.md](executor/README.md) and
+  [DR-2026-003](decisions/DR-2026-003-autonomous-executor-runtime.md).
 
 ## Quick Start
 
