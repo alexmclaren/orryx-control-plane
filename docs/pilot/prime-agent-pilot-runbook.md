@@ -25,11 +25,41 @@ afternoon. If it cannot be made to work at this size, it will not work larger.
 | # | Prerequisite | State, 2026-08-09 | Owner |
 |---|---|---|---|
 | P1 | A Linux host: WSL2 distro or Docker container | ✅ **met on `DESKTOP-V0RDMNK`, 2026-08-09** — Docker Desktop started, server 29.5.3, `docker run --rm alpine:3.20 uname -sr` → `Linux 6.6.114.1-microsoft-standard-WSL2`, 20 CPUs. Isolation verified: a plain `docker run` sees no host filesystem — `/mnt` empty, `D:\Secrets` unreachable. ❌ on `3KRD96T`. The two orphaned Ubuntu registrations on `V0RDMNK` remain and should still be unregistered. | Operator |
-| P6 | Pilot repository's default branch is protected, `enforce_admins: true` | ❌ **`orryx-delivery-dashboard` `master` returns 404 on the protection endpoint.** See §1 — without this, M9's protected-branch clause has nothing to detect. | Operator |
-| P2 | A metered Anthropic API key scoped to the pilot, spend cap set | ❌ **human decision — new cost** | Founder |
-| P3 | Pinned Prime Agent release, SHA-256 verified, from `PrimeIntellect-ai` | ❌ | Operator |
-| P4 | Disposable clone — never a primary clone or a worktree of one | ❌ | Operator |
-| P5 | Pilot repository is non-PHI and eligible per `eligibility.js` | ✅ candidates exist | — |
+| P6 | Pilot repository's default branch is protected, `enforce_admins: true` | ✅ **applied 2026-08-09** — `orryx-delivery-dashboard` `master`: `enforce_admins=true`, PR required, force-push and deletion disabled. Was 404. | Operator |
+| P2 | A metered Anthropic API key scoped to the pilot, spend cap set | ❌ **not obtained.** Running on subscription OAuth with `local_experiment_ack`, which assessment §5 sanctions for *"one operator, one machine, manual pilot runs on a non-PHI repo"*. **Consequence: M4 is unmeasurable and is dropped, not passed** — a subscription has usage limits, not a dollar meter. Not valid for the §4 scripted comparison or any unattended run. | Founder |
+| P3 | Pinned Prime Agent release, SHA-256 verified, from `PrimeIntellect-ai` | ⚠️ **partially satisfiable — this row overpromises. See §0.1.** Pinned ✅ (`v0.7.1` via `PRIME_AGENT_VERSION`). SHA-256 verified ❌. From `PrimeIntellect-ai` ❌. | Operator |
+| P4 | Disposable clone — never a primary clone or a worktree of one | ✅ **2026-08-09** — `D:\_pilot\dashboard`, standalone clone of `master` @ `4ee8d97`, verified not a worktree. Second clone `D:\_pilot\dashboard-armA` for Arm A. | Operator |
+| P5 | Pilot repository is non-PHI and eligible per `eligibility.js` | ✅ `orryx-delivery-dashboard`, platform class, R1 ceiling | — |
+
+### 0.1 P3 cannot be satisfied as written — corrected 2026-08-09
+
+The installer at `https://app.primeintellect.ai/prime-agent/install.sh` was
+fetched and inspected before running. Two of P3's three clauses do not hold:
+
+- **The artifact is not checksum-verified.** Grepping the installer for
+  `sha256|checksum|shasum|verify`, every hit concerns Node.js — it fetches
+  `SHASUMS256.txt` from nodejs.org and runs `verify_node_standalone_download`.
+  There is no equivalent for the Prime Agent package. The dependency is
+  verified; the product is not.
+- **Downloads do not come from `PrimeIntellect-ai`.** They resolve to
+  `https://pub-728493de92a943e2a9b2d17b4719f318.r2.dev`, an auto-generated
+  Cloudflare R2 public bucket whose hostname carries no identity.
+
+Version pinning does work: `PRIME_AGENT_VERSION` is honoured, and the pilot
+pinned `v0.7.1` rather than tracking the `stable` channel.
+
+So the original line — *"The installer's own checksum verification protects the
+download, not your choice of source"* — is **wrong for the artifact that
+matters**. Restated honestly: **trust rests on `app.primeintellect.ai` plus TLS,
+with no independent verification of what is installed.**
+
+Not unusual for a young project, and not a blocker for a disposable container.
+It does interact badly with P2: an unverified artifact and a credential for the
+entire Claude account end up in the same container. With a scoped, capped API key
+the worst case is a key you revoke. That is the strongest argument for P2, and it
+is an exposure argument rather than a policy one.
+
+*(Caveat: this rests on a grep of the installer, not a full read of it.)*
 
 **P2 is a blocking human decision.** It is a new recurring provider cost. Do not
 substitute a personal Claude subscription: `validateConfig` will reject it without
