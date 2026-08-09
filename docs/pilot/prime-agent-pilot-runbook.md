@@ -24,7 +24,8 @@ afternoon. If it cannot be made to work at this size, it will not work larger.
 
 | # | Prerequisite | State, 2026-08-09 | Owner |
 |---|---|---|---|
-| P1 | A Linux host: WSL2 distro or Docker container | ❌ both machines. `3KRD96T`: only `docker-desktop`, daemon stopped. `V0RDMNK`: `Ubuntu` + `Ubuntu-24.04` listed but **orphaned — backing disk missing, neither starts**; Docker Desktop installed, backing store intact at `D:\Docker\DockerDesktopWSL\main`, daemon stopped. ~30 min of operator work there, either route. | Operator |
+| P1 | A Linux host: WSL2 distro or Docker container | ✅ **met on `DESKTOP-V0RDMNK`, 2026-08-09** — Docker Desktop started, server 29.5.3, `docker run --rm alpine:3.20 uname -sr` → `Linux 6.6.114.1-microsoft-standard-WSL2`, 20 CPUs. Isolation verified: a plain `docker run` sees no host filesystem — `/mnt` empty, `D:\Secrets` unreachable. ❌ on `3KRD96T`. The two orphaned Ubuntu registrations on `V0RDMNK` remain and should still be unregistered. | Operator |
+| P6 | Pilot repository's default branch is protected, `enforce_admins: true` | ❌ **`orryx-delivery-dashboard` `master` returns 404 on the protection endpoint.** See §1 — without this, M9's protected-branch clause has nothing to detect. | Operator |
 | P2 | A metered Anthropic API key scoped to the pilot, spend cap set | ❌ **human decision — new cost** | Founder |
 | P3 | Pinned Prime Agent release, SHA-256 verified, from `PrimeIntellect-ai` | ❌ | Operator |
 | P4 | Disposable clone — never a primary clone or a worktree of one | ❌ | Operator |
@@ -59,8 +60,26 @@ task can be given to the current Claude Code workflow for a fair comparison.
 **Budget:** `cost_usd: 15`, `wall_clock_seconds: 3600`, `max_iterations: 5` —
 the R1 ceiling. Enforced by `BudgetLedger`, not by asking the harness nicely.
 
-**Merge:** `pr_required`. Direct merge is impossible by construction —
-`may_push_protected` is not a grantable permission.
+**Merge:** `pr_required`.
+
+~~Direct merge is impossible by construction — `may_push_protected` is not a
+grantable permission.~~ **Corrected 2026-08-09: that is true of the boundary's
+permission model and false of the system.** Prime Agent executes model-generated
+shell with the operator's user permissions, so it does not need the permission
+granted — it can run `git push origin master`. The only thing that stops it is
+server-side branch protection, and `orryx-delivery-dashboard`'s `master` has
+none (404 on the protection endpoint, checked 2026-08-09). Hence P6.
+
+`enforce_admins: true` is the load-bearing field, not an extra. The estate is a
+single-admin personal account, so with it false the protection would not bind
+the account the pilot runs as.
+
+The same reasoning applies to secret reads, and it is why P1 must be a container
+rather than merely a Linux host. `DEFAULT_PERMISSIONS.filesystem.deny` is
+configuration, and configuration cannot bind a process holding a shell. **The
+container's mount set is the secret-read control** — verified 2026-08-09 that a
+plain `docker run` sees no host filesystem. Mount only the disposable clone. A
+WSL distro with `D:\` visible satisfies P1 as written and enforces nothing.
 
 ---
 

@@ -14,6 +14,18 @@ Track B (pilot) is blocked on P1 and D1. Track C (rollout) is blocked on Track A
 
 Four checks were requested before planning. Two changed the plan.
 
+> **Update, later on 2026-08-09: P1 is now MET.** Docker Desktop was started;
+> server 29.5.3, `docker run --rm alpine:3.20 uname -sr` returns
+> `Linux 6.6.114.1-microsoft-standard-WSL2`, and a plain `docker run` sees no
+> host filesystem (`/mnt` empty, `D:\Secrets` unreachable). §0.1 below records
+> how it read before that, and why the listing test was wrong — that correction
+> stands regardless. The two orphaned Ubuntu registrations still want removing.
+>
+> A new prerequisite **P6** was added to the runbook: the pilot repository's
+> default branch must be protected with `enforce_admins: true`.
+> `orryx-delivery-dashboard`'s `master` has no protection at all, which leaves
+> M9's protected-branch clause with nothing to detect. See §B.4.
+
 ### 0.1 P1 (a real Linux host) — **NOT MET**, and the runbook's test for it is wrong
 
 ```
@@ -254,6 +266,33 @@ D2 decided ────┘
 M8 first: `kill -9` mid-run, resume, complete. If it fails, stop — the principal reason
 to adopt Prime Agent is resumability and nothing else in the runbook compensates.
 M9 is not a metric to weigh; one violation ends the pilot.
+
+### B.4 M9 is currently unenforceable, and that is the real blocker
+
+M9 — zero governance violations — is pass/fail for the whole pilot. Checked
+2026-08-09, exactly one of its four clauses can detect anything:
+
+| M9 clause | Enforced today? |
+|---|---|
+| Protected-branch write | **No** — `orryx-delivery-dashboard` `master` has no protection (404) |
+| Secret read | **No** — the deny list is boundary configuration; `#invoke` is a stub, and a shell ignores configuration |
+| Out-of-scope edit | Only via human PR review, which clause 1 does not compel |
+| Ceiling exceeded | **Yes** — `BudgetLedger`, against the control plane's own clock |
+
+Branch protection across the estate, same date: `pillarworks-build-mvp`,
+`Pillarworks-Enterprise-Website` and `Clinical_trials` are protected. **Every
+platform repository is not** — `orryx-delivery-dashboard`, `orryx-standards`,
+`orryx-control-plane`, `orryx-website`. So is **`orryx-flow`**, which is a PHI
+product whose default branch is `develop`. That last one is independent of this
+work and wants its own attention.
+
+The constraint "no direct write to protected branches" is therefore vacuous
+across every repository the pilot or the rollout would touch.
+
+**Fix the pilot repository before the pilot; sequence the rest deliberately.**
+Several routines commit directly to `orryx-control-plane` and `orryx-state`, and
+`enforce_admins: true` would break them — verify which before any estate-wide
+change, not after.
 
 ### B.3 Runbook edits needed before it is run
 
