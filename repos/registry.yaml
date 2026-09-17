@@ -1,9 +1,12 @@
 # Orryx Repository Registry
 # Master list of all Orryx repositories
+#
+# Classification (production-bearing / archived / ...) is owned by
+# D:\state\repo-classification.json. `status` here must not contradict it.
 
-version: "1.0"
-last_updated: "2026-04-27T14:00:00Z"
-updated_by: "founder"
+version: "1.1"
+last_updated: "2026-09-17T00:00:00Z"
+updated_by: "claude (reconcile against repo-classification.json, pending founder review)"
 
 # CONTROL & GOVERNANCE REPOS
 control:
@@ -69,13 +72,13 @@ products:
   - repo_name: triora
     type: product
     owner: triora_team
-    status: planned
-    url: https://github.com/orryx/triora
-    local_path: ../triora
-    description: "Patient management system"
+    status: active  # repo-classification.json: Clinical.Trials = production-bearing
+    url: https://github.com/alexmclaren/Clinical_trials
+    local_path: ../Clinical.Trials  # there is no ../triora checkout
+    description: "Clinical trial patient-matching platform (triora.io)"
     tech_stack:
-      frontend: react-typescript-nextjs
-      backend: node-typescript-nestjs
+      frontend: react-typescript-vite
+      backend: python-fastapi
       database: postgresql
     inherits_from:
       - orryx-standards
@@ -97,14 +100,56 @@ products:
   - repo_name: orryx-flow
     type: product
     owner: platform_team
-    status: planned
-    url: https://github.com/orryx/orryx-flow
+    status: archived
+    # Archived on GitHub; reclassified 2026-09-01 in repo-classification.json.
+    # This records current disposition, NOT a retirement decision: retire vs
+    # archived-in-error is open as ESC-CEO-099 (8 unmerged PRs, two of them
+    # clinical-safety). If un-archived, this returns to active.
+    escalation: ESC-CEO-099
+    url: https://github.com/alexmclaren/orryx-flow
     local_path: ../orryx-flow
-    description: "Workflow engine"
+    description: "Fertility/clinical ops platform (workflow engine)"
     inherits_from:
       - orryx-standards
       - orryx-governance
       - orryx-knowledge
+
+  - repo_name: care-companion
+    type: product
+    owner: founder
+    status: unclassified  # absent from repo-classification.json
+    url: https://github.com/alexmclaren/companion
+    local_path: ../companion
+    description: "AI Care Companion product monorepo (the build)"
+    tech_stack:
+      frontend: react-typescript-vite
+      backend: python-fastapi
+    related:
+      - care-companion-venture
+    inherits_from:
+      - orryx-standards
+      - orryx-governance
+      - orryx-knowledge
+
+  - repo_name: care-companion-venture
+    type: venture-docs
+    owner: founder
+    status: unclassified  # absent from repo-classification.json
+    url: https://github.com/alexmclaren/care-companion-venture
+    local_path: ../care-companion-venture
+    description: "Care Companion strategy, research, regulatory and decisions (no code)"
+    related:
+      - care-companion
+
+  - repo_name: property-maintenance-os
+    type: product
+    owner: founder
+    status: unclassified  # repo-classification.json unclassified_pending, ESC-CEO-133
+    url: https://github.com/alexmclaren/property-maintenance-os
+    local_path: ../property-maintenance-os
+    description: "Property maintenance OS: venture discovery plus Next.js webapp"
+    tech_stack:
+      frontend: react-typescript-nextjs
 
 # SHARED CAPABILITY REPOS (Deferred)
 shared:
